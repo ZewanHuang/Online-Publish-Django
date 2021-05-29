@@ -43,3 +43,8 @@ class VerifyStatus:
 
 class UserInfoStatus:
     USER_MISS = '4001'
+
+
+class WriterStatus:
+    USERNAME_MISS = '4001'  # 用户名不存在
+    APPLY_FAILURE = '4002'  # 申请失败
