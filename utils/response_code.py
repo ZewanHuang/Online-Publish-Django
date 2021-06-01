@@ -56,5 +56,10 @@ class ArticleStatus:
 
 class ReviewStatus:
     REVIEW_EXIST = '4001'  # 已提交评论
-    REVIEW_NOT_MATCH = '4002'   # 审稿人不能评论该文章
-    AR_NOT_EXIST = '4003'   # 不存在审稿人或文章
+    REVIEW_NOT_MATCH = '4002'  # 审稿人不能评论该文章
+    AR_NOT_EXIST = '4003'  # 不存在审稿人或文章
+
+
+class WritingPageStatus:
+    USER_NOT_LOGIN = '4001'
+    USER_NOT_AUTHOR = '4002'

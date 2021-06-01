@@ -39,11 +39,12 @@ def login(request):
             if user.password == hash_code(password):
                 request.session['is_login'] = True
                 request.session['username'] = username
+                request.session['type'] = user.user_type
 
                 if not user.has_confirmed:
                     return JsonResponse({'status_code': LoginStatus.USER_NOT_CONFIRM})
 
-                return JsonResponse({'status_code': SUCCESS})
+                return JsonResponse({'status_code': SUCCESS, 'user_type': user.user_type})
 
             else:
                 return JsonResponse({'status_code': LoginStatus.PASSWORD_ERROR})

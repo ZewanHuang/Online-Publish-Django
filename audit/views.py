@@ -1,10 +1,13 @@
 from django.http import JsonResponse
+import json
 
 # Create your views here.
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 from audit.form import *
 from audit.models import *
+from django3.settings import WEB_ROOT
 from user.models import User
 from utils.hash import hash_code
 from utils.response_code import *
@@ -122,3 +125,30 @@ def review(request):
             return JsonResponse({'status_code': FORM_ERROR})
 
         return JsonResponse({'status_code': SUCCESS})
+
+
+@csrf_exempt
+def writing(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        if request.session.get('is_login') and username == request.session.get('username'):
+            print(1)
+            that_user = get_object_or_404(User, username=username)
+            if that_user.user_type == '作者':
+                info = {
+                    'username': that_user.username,
+                    'real_name': that_user.real_name,
+                    # 'education': that_user.education_exp,
+                    # 'job': that_user.job_unit
+                }
+                if that_user.avatar:
+                    info['avatar'] = WEB_ROOT + that_user.avatar.url
+                else:
+                    info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '2.png'
+                return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+
+            else:
+                return JsonResponse({'status_code': WritingPageStatus.USER_NOT_AUTHOR})
+
+        else:
+            return JsonResponse({'status_code': WritingPageStatus.USER_NOT_LOGIN})
