@@ -48,3 +48,13 @@ class UserInfoStatus:
 class WriterStatus:
     USERNAME_MISS = '4001'  # 用户名不存在
     APPLY_FAILURE = '4002'  # 申请失败
+
+
+class ArticleStatus:
+    UPLOAD_FAILURE = '4001'  # 上传失败
+
+
+class ReviewStatus:
+    REVIEW_EXIST = '4001'  # 已提交评论
+    REVIEW_NOT_MATCH = '4002'   # 审稿人不能评论该文章
+    AR_NOT_EXIST = '4003'   # 不存在审稿人或文章
