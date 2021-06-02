@@ -56,3 +56,13 @@ class ConfirmString(models.Model):
         ordering = ["-c_time"]
         verbose_name = "确认码"
         verbose_name_plural = verbose_name
+
+
+class Collect(models.Model):
+    article_id = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'user_collect'
+        verbose_name = '用户收藏的文章'
+        verbose_name_plural = verbose_name
