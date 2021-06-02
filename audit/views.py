@@ -13,38 +13,16 @@ from utils.response_code import *
 @csrf_exempt
 def apply_writer(request):
     if request.method == 'POST':
-
-        writer_form = WriterForm(request.POST)
-
-        if writer_form.is_valid():
-            username = writer_form.cleaned_data.get('username')
-            password = writer_form.cleaned_data.get('password')
-            user_desc = writer_form.cleaned_data.get('user_desc')
-            real_name = writer_form.cleaned_data.get('real_name')
-            education_exp = writer_form.cleaned_data.get('education_exp')
-            job_unit = writer_form.cleaned_data.get('job_unit')
-
-            try:
-                user = User.objects.get(username=username, password=hash_code(password))
-            except:
-                return JsonResponse({'status_code': WriterStatus.USERNAME_MISS})
-
-            # 成功
-            new_writer = Writer()
-            user.user_type = 'author'
-            user.user_desc = user_desc
-            user.real_name = real_name
-            user.education_exp = education_exp
-            user.job_unit = job_unit
-            new_writer.writer = user
-            try:
-                new_writer.save()
-            except:
-                return JsonResponse({'status_code': WriterStatus.APPLY_FAILURE})
-
+        username = request.session.get('username')
+        user = User.objects.get(username=username)
+        if user.has_confirmed:
+            if len(user.real_name) == 0 or len(user.education_exp) == 0 or len(user.job_unit) == 0 :
+                return JsonResponse({'status_code': WriterStatus.MESSAGE_NOT_EXIST})
+            else:
+                user.user_type = '作者'
+                user.save()
         else:
-            return JsonResponse({'status_code': FORM_ERROR})
-
+            return JsonResponse({'status_code': WriterStatus.EMAIL_NOT_CONFIRMED})
         return JsonResponse({'status_code': SUCCESS})
 
 
@@ -97,27 +75,25 @@ def review(request):
         review_form = ReviewForm(request.POST)
 
         if review_form.is_valid():
-            reviewer_id = review_form.cleaned_data.get('reviewer_id')
+            reviewer_name = review_form.cleaned_data.get('reviewer_name')
             article_id = review_form.cleaned_data.get('article_id')
             new_review = review_form.cleaned_data.get('review')
 
-            reviewer = Reviewer.objects.get(id=reviewer_id)
-            article = Article.objects.get(article_id=article_id)
-
-            if reviewer and article:
-                same_review = ArticleReview.objects.get(reviewer_id=reviewer_id, article_id=article_id)
-                if same_review:
+            try:
+                reviewer = Reviewer.objects.get(reviewer__username=reviewer_name)
+                article = Article.objects.get(article_id=article_id)
+                try:
+                    same_review = ArticleReview.objects.get(reviewer=reviewer, article=article)
                     if same_review.status == 0:
                         same_review.review = new_review
                         same_review.status = 1
                         same_review.save()
                     else:
                         return JsonResponse({'status_code': ReviewStatus.REVIEW_EXIST})
-                else:
+                except:
                     return JsonResponse({'status_code': ReviewStatus.REVIEW_NOT_MATCH})
-            else:
+            except:
                 return JsonResponse({'status_code': ReviewStatus.AR_NOT_EXIST})
-
         else:
             return JsonResponse({'status_code': FORM_ERROR})
 

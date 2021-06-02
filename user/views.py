@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt  # 避免 csrf 错误
 
+from audit.models import Article
 from django3.settings import *
 
 from .form import *
@@ -198,3 +199,23 @@ def user_info(request):
         else:
             info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '2.png'
         return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+
+
+@csrf_exempt
+def collect(request):
+    if request.method == 'GET':
+        article_id = request.GET.get('article_id')
+        username = request.session.get('username')
+        user = User.objects.get(username=username)
+        article = Article.objects.filter(article_id=article_id)
+        if article:
+            new_collect = Collect()
+            new_collect.user = user
+            new_collect.article_id = article_id
+            new_collect.save()
+            return JsonResponse({'status_code': SUCCESS})
+        else:
+            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+    else:
+        return JsonResponse({'status_code': DEFAULT})
