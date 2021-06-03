@@ -132,7 +132,6 @@ def writing(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         if request.session.get('is_login') and username == request.session.get('username'):
-            print(1)
             that_user = get_object_or_404(User, username=username)
             if that_user.user_type == '作者':
                 info = {
