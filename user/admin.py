@@ -6,3 +6,4 @@ from .models import *
 
 admin.site.register(User)
 admin.site.register(ConfirmString)
+admin.site.register(Collect)

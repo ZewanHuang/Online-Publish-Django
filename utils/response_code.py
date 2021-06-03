@@ -46,12 +46,13 @@ class UserInfoStatus:
 
 
 class WriterStatus:
-    USERNAME_MISS = '4001'  # 用户名不存在
-    APPLY_FAILURE = '4002'  # 申请失败
+    EMAIL_NOT_CONFIRMED = '4001'  # 邮箱未验证
+    MESSAGE_NOT_EXIST = '4002'  # 信息不完善
 
 
 class ArticleStatus:
     UPLOAD_FAILURE = '4001'  # 上传失败
+    ARTICLE_NOT_EXIST = '4002'  # 文章不存在
 
 
 class ReviewStatus:
