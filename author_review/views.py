@@ -14,12 +14,20 @@ from utils.response_code import *
 
 @csrf_exempt
 def apply_writer(request):
-    if request.method == 'POST':
+    is_login = request.session.get('is_login')
+
+    if is_login:
         username = request.session.get('username')
+    else:
+        return JsonResponse({'status_code': WriterStatus.USER_NOT_LOGIN})
+
+    try:
         user = User.objects.get(username=username)
-        if user.has_confirmed:
-            if len(user.real_name) == 0 or len(user.education_exp) == 0 or len(user.job_unit) == 0 :
-                return JsonResponse({'status_code': WriterStatus.MESSAGE_NOT_EXIST})
+    except:
+        return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
+
+    if user.has_confirmed:
+        if user.real_name and user.education_exp and user.job_unit:
             if user.user_type == '作者':
                 return JsonResponse({'status_code': WriterStatus.WRITER_EXIST})
             else:
@@ -28,8 +36,11 @@ def apply_writer(request):
                 writer = Writer()
                 writer.writer = user
         else:
-            return JsonResponse({'status_code': WriterStatus.EMAIL_NOT_CONFIRMED})
-        return JsonResponse({'status_code': SUCCESS})
+            return JsonResponse({'status_code': WriterStatus.MESSAGE_NOT_EXIST})
+
+    else:
+        return JsonResponse({'status_code': WriterStatus.EMAIL_NOT_CONFIRMED})
+    return JsonResponse({'status_code': SUCCESS})
 
 
 @csrf_exempt

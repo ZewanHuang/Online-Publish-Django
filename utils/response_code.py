@@ -50,6 +50,8 @@ class WriterStatus:
     EMAIL_NOT_CONFIRMED = '4001'  # 邮箱未验证
     MESSAGE_NOT_EXIST = '4002'  # 信息不完善
     WRITER_EXIST = '4003'  # 已经申请为作者
+    USER_NOT_LOGIN = '4004'
+    USER_NOT_EXIST = '4005'
 
 
 class ArticleStatus:
@@ -66,3 +68,12 @@ class RemarkStatus:
 class WritingPageStatus:
     USER_NOT_LOGIN = '4001'
     USER_NOT_AUTHOR = '4002'
+
+
+class GetSessionStatus:
+    USER_NOT_LOGIN = '4001'
+
+
+class EditDetailInfo:
+    USER_NOT_LOGIN = '4001'
+    USER_NOT_EXIST = '4002'

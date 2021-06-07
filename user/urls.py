@@ -10,8 +10,9 @@ urlpatterns = [
     path('confirm/', user_confirm),
     path('unverified_email/', unverified_email),
     path('userinfo/', user_info),
-    path('self-userinfo/', self_user_info),
     path('collect/', collect),
+    path('get_session/', get_session_user),
+    path('edit/', userinfo_edit),
 
     path('upload_image/', upload_avatar),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

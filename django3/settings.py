@@ -158,6 +158,7 @@ MEDIA_URL = '/media/'
 
 # Root url
 
+WEB_FRONT = 'http://127.0.0.1:8080'
 WEB_ROOT = 'http://127.0.0.1:8080/api'
 # WEB_ROOT = 'https://zewan.top/api'
 

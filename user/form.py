@@ -16,6 +16,13 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(label="邮箱地址", widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
 
+class DetailInfoForm(forms.Form):
+    real_name = forms.CharField(label="真实姓名", max_length=20)
+    education = forms.CharField(label="教育经历", max_length=200)
+    job = forms.CharField(label="职业经历", max_length=200)
+    description = forms.CharField(label="个人简介", max_length=200)
+
+
 class UploadForm(forms.Form):
     class Meta:
         model = User
