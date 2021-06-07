@@ -9,7 +9,6 @@ from .form import *
 from .models import *
 from django3.settings import WEB_ROOT
 from user.models import User
-from utils.hash import hash_code
 from utils.response_code import *
 
 
@@ -21,9 +20,13 @@ def apply_writer(request):
         if user.has_confirmed:
             if len(user.real_name) == 0 or len(user.education_exp) == 0 or len(user.job_unit) == 0 :
                 return JsonResponse({'status_code': WriterStatus.MESSAGE_NOT_EXIST})
+            if user.user_type == '作者':
+                return JsonResponse({'status_code': WriterStatus.WRITER_EXIST})
             else:
                 user.user_type = '作者'
                 user.save()
+                writer = Writer()
+                writer.writer = user
         else:
             return JsonResponse({'status_code': WriterStatus.EMAIL_NOT_CONFIRMED})
         return JsonResponse({'status_code': SUCCESS})
@@ -36,7 +39,6 @@ def upload(request):
         article_form = ArticleForm(request.POST)
 
         if article_form.is_valid():
-            username = article_form.cleaned_data.get('username')
             title = article_form.cleaned_data.get('title')
             abstract = article_form.cleaned_data.get('abstract')
             key = article_form.cleaned_data.get('key')
@@ -45,7 +47,7 @@ def upload(request):
             article_address = article_form.cleaned_data.get('article_address')
             str_writer = article_form.cleaned_data.get('writers')
 
-            if request.session.get('is_login') and username == request.session.get('username'):
+            if request.session.get('is_login'):
                 new_article = Article()
                 new_article.title = title
                 new_article.abstract = abstract
@@ -60,7 +62,7 @@ def upload(request):
                 writers = str_writer.split(',')
                 for writer in writers:
                     same_writer = Writer.objects.get(username=writer)
-                    w = ArticleWriter(writer=same_writer, article=new_article)
+                    new_article.writers.add(same_writer)
 
             else:
                 return JsonResponse({'status_code': LogoutStatus.USER_NOT_LOGIN})
@@ -72,31 +74,31 @@ def upload(request):
 
 
 @csrf_exempt
-def review(request):
+def remark(request):
     if request.method == 'POST':
 
-        review_form = ReviewForm(request.POST)
+        remark_form = RemarkForm(request.POST)
 
-        if review_form.is_valid():
-            reviewer_name = review_form.cleaned_data.get('reviewer_name')
-            article_id = review_form.cleaned_data.get('article_id')
-            new_review = review_form.cleaned_data.get('author_review')
+        if remark_form.is_valid():
+            reviewer_name = remark_form.cleaned_data.get('reviewer_name')
+            article_id = remark_form.cleaned_data.get('article_id')
+            new_remark = remark_form.cleaned_data.get('author_review')
 
             try:
-                reviewer = Reviewer.objects.get(reviewer__username=reviewer_name)
+                review = Review.objects.get(review__username=reviewer_name)
                 article = Article.objects.get(article_id=article_id)
                 try:
-                    same_review = ArticleReview.objects.get(reviewer=reviewer, article=article)
-                    if same_review.status == 0:
-                        same_review.review = new_review
-                        same_review.status = 1
-                        same_review.save()
+                    same_remark = ArticleRemark.objects.get(review=review, article=article)
+                    if same_remark.status == 0:
+                        same_remark.remark = new_remark
+                        same_remark.status = 1
+                        same_remark.save()
                     else:
-                        return JsonResponse({'status_code': ReviewStatus.REVIEW_EXIST})
+                        return JsonResponse({'status_code': RemarkStatus.REMARK_EXIST})
                 except:
-                    return JsonResponse({'status_code': ReviewStatus.REVIEW_NOT_MATCH})
+                    return JsonResponse({'status_code': RemarkStatus.REVIEW_NOT_MATCH})
             except:
-                return JsonResponse({'status_code': ReviewStatus.AR_NOT_EXIST})
+                return JsonResponse({'status_code': RemarkStatus.AR_NOT_EXIST})
         else:
             return JsonResponse({'status_code': FORM_ERROR})
 

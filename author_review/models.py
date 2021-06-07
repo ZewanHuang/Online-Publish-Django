@@ -19,11 +19,11 @@ class Writer(models.Model):
         verbose_name_plural = verbose_name
 
 
-class Reviewer(models.Model):
-    reviewer = models.OneToOneField(User, on_delete=models.CASCADE)
+class Review(models.Model):
+    review = models.OneToOneField(User, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'tb_reviewers'
+        db_table = 'tb_reviews'
         verbose_name = '审稿人'
         verbose_name_plural = verbose_name
 
@@ -41,13 +41,19 @@ class Article(models.Model):
     article_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=80)
     abstract = models.TextField()
-    key = models.CharField(validators=[validate_comma_separated_integer_list], max_length=100)
+    key = models.CharField(max_length=100)
     content = models.TextField()
-    status = models.SmallIntegerField(choices=((0, "审核中"), (1, "审核通过"), (2, "审核不通过")), default=0)
+    status = models.SmallIntegerField(choices=((0, "审核中"), (1, "审核通过"), (2, "审核不通过")
+                                               , (3, "未发布"), (4, "已发布")), default=0)
+    is_popular = models.SmallIntegerField(choices=((0, "普通"), (1, "受欢迎")), blank=True)
     category = models.ForeignKey(to="Category", on_delete=models.CASCADE)
     article_address = models.FileField(upload_to=file_directory_path)
-    writers = models.ManyToManyField(Writer, through='ArticleWriter')
-    reviews = models.ManyToManyField(Reviewer, through='ArticleReview')
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(null=True, blank=True)
+    review_time = models.DateTimeField(null=True, blank=True)
+    release_time = models.DateTimeField(null=True, blank=True)
+    writers = models.ManyToManyField(Writer)
+    remarks = models.ManyToManyField(Review, through='ArticleRemark')
 
     class Meta:
         db_table = 'tb_articles'
@@ -58,24 +64,14 @@ class Article(models.Model):
         return self.article_id
 
 
-class ArticleWriter(models.Model):
-    writer = models.ForeignKey(Writer, on_delete=models.CASCADE)
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = 'article-writer-relation'
-        verbose_name = '文章-作者关系表'
-        verbose_name_plural = verbose_name
-
-
-class ArticleReview(models.Model):
-    reviewer = models.ForeignKey(Reviewer, on_delete=models.CASCADE)
+class ArticleRemark(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     status = models.SmallIntegerField(choices=((0, "未提交评论"), (1, "已提交评论")), default=0)
-    review = models.TextField(null=True, blank=True)
-    create_time = models.DateField(auto_now_add=True)
+    remark = models.TextField(null=True, blank=True)
+    create_time = models.DateField(auto_now_add=True) # 创建审稿人和文章关系的时间
 
     class Meta:
-        db_table = 'article-reviewer-relation'
+        db_table = 'article-review-relation'
         verbose_name = '文章-审稿人关系表'
         verbose_name_plural = verbose_name
