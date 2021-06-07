@@ -42,6 +42,7 @@ class VerifyStatus:
 
 
 class UserInfoStatus:
+    USER_SELF = '2001'
     USER_MISS = '4001'
 
 

@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt  # 避免 csrf 错误
 
-from audit.models import Article
+from author_review.models import Article
 from django3.settings import *
 
 from .form import *
@@ -35,7 +35,7 @@ def login(request):
             try:
                 user = User.objects.get(username=username)
             except:
-                return JsonResponse('status_code', LoginStatus.USERNAME_MISS)
+                return JsonResponse({'status_code': LoginStatus.USERNAME_MISS})
 
             if user.password == hash_code(password):
                 request.session['is_login'] = True
@@ -93,12 +93,12 @@ def register(request):
             code = make_confirm_string(new_user)
             try:
                 send_email_confirm(email, code)
+                request.session['is_login'] = True
+                request.session['username'] = new_user.username
+                request.session['type'] = '读者'
             except:
                 new_user.delete()
                 return JsonResponse({'status_code': RegisterStatus.SEND_EMAIL_ERROR})
-
-            request.session['is_login'] = True
-            request.session['username'] = new_user.username
 
             return JsonResponse({'status_code': SUCCESS})
 
@@ -181,7 +181,7 @@ def upload_avatar(request):
 
 
 @csrf_exempt
-def user_info(request):
+def self_user_info(request):
     if request.method == 'POST':
         that_username = request.POST.get('username')
         that_user = get_object_or_404(User, username=that_username)
@@ -199,6 +199,29 @@ def user_info(request):
             info['avatar'] = WEB_ROOT + that_user.avatar.url
         else:
             info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '2.png'
+        return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+
+
+@csrf_exempt
+def user_info(request):
+    if request.method == 'POST':
+        that_username = request.POST.get('username')
+        that_user = get_object_or_404(User, username=that_username)
+
+        info = {
+            'username': that_user.username,
+            'email': that_user.email,
+            'description': that_user.user_desc,
+        }
+        if that_user.avatar:
+            info['avatar'] = WEB_ROOT + that_user.avatar.url
+        else:
+            info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '2.png'
+
+        self_username = request.session.get('username')
+        if self_username == that_username:
+            return JsonResponse({'status_code': UserInfoStatus.USER_SELF, 'user': json.dumps(info, ensure_ascii=False)})
+
         return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
 
 

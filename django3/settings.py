@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'user',
-    'audit',
+    'author_review',
 ]
 
 MIDDLEWARE = [
@@ -159,4 +159,5 @@ MEDIA_URL = '/media/'
 # Root url
 
 WEB_ROOT = 'http://127.0.0.1:8080/api'
+# WEB_ROOT = 'https://zewan.top/api'
 

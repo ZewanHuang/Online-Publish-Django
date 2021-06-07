@@ -10,6 +10,7 @@ urlpatterns = [
     path('confirm/', user_confirm),
     path('unverified_email/', unverified_email),
     path('userinfo/', user_info),
+    path('self-userinfo/', self_user_info),
     path('collect/', collect),
 
     path('upload_image/', upload_avatar),
