@@ -149,19 +149,14 @@ def unverified_email(request):
     if this_user.has_confirmed:
         return JsonResponse({'status_code': VerifyStatus.CONFIRM_REPEATED})
 
-    if request.method == 'POST':
-        resend = request.POST.get('resend')
-        if resend == '1':
-            try:
-                code = ConfirmString.objects.get(user_id=this_user.id).code
-                send_email_confirm(this_user.email, code)
-            except:
-                return JsonResponse({'status_code': VerifyStatus.SEND_EMAIL_ERROR})
-            return JsonResponse({'status_code': SUCCESS})
-        elif resend != 0 or resend != 1:
-            return JsonResponse({'status_code': FORM_ERROR})
+    try:
+        code = ConfirmString.objects.get(user_id=this_user.id).code
+        send_email_confirm(this_user.email, code)
+    except:
+        this_user.delete()
+        return JsonResponse({'status_code': VerifyStatus.SEND_EMAIL_ERROR})
 
-    return JsonResponse({'status_code': DEFAULT})
+    return JsonResponse({'status_code': SUCCESS, 'email': this_user.email, 'username': this_user.username})
 
 
 @csrf_exempt
