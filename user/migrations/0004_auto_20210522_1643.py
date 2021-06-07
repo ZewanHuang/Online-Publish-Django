@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='user_type',
-            field=models.CharField(choices=[('reader', '读者'), ('author', '作者'), ('reviewer', '审稿人'), ('edit', '编辑')], default='读者', max_length=32),
+            field=models.CharField(choices=[('reader', '读者'), ('author_review', '作者'), ('reviewer', '审稿人'), ('edit', '编辑')], default='读者', max_length=32),
         ),
         migrations.AlterField(
             model_name='user',

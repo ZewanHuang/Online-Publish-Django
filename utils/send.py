@@ -27,7 +27,7 @@ def send_email_confirm(email, code):
                     这里是网上出版系统，专注于管理出版与审核！</p>
                     <p>请点击站点链接完成注册确认！</p>
                     <p>此链接有效期为{}天！</p>
-                    '''.format(settings.WEB_ROOT, code, settings.CONFIRM_DAYS)   # url must be corrected
+                    '''.format(settings.WEB_FRONT, code, settings.CONFIRM_DAYS)   # url must be corrected
 
     msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
     msg.attach_alternative(html_content, "text/html")

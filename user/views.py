@@ -35,12 +35,11 @@ def login(request):
             try:
                 user = User.objects.get(username=username)
             except:
-                return JsonResponse('status_code', LoginStatus.USERNAME_MISS)
+                return JsonResponse({'status_code': LoginStatus.USERNAME_MISS})
 
             if user.password == hash_code(password):
                 request.session['is_login'] = True
                 request.session['username'] = username
-                request.session['type'] = user.user_type
 
                 if not user.has_confirmed:
                     return JsonResponse({'status_code': LoginStatus.USER_NOT_CONFIRM})
@@ -90,15 +89,15 @@ def register(request):
             new_user.email = email
             new_user.save()
 
+            request.session['is_login'] = True
+            request.session['username'] = username
+
             code = make_confirm_string(new_user)
             try:
                 send_email_confirm(email, code)
             except:
                 new_user.delete()
                 return JsonResponse({'status_code': RegisterStatus.SEND_EMAIL_ERROR})
-
-            request.session['is_login'] = True
-            request.session['username'] = new_user.username
 
             return JsonResponse({'status_code': SUCCESS})
 
@@ -150,19 +149,14 @@ def unverified_email(request):
     if this_user.has_confirmed:
         return JsonResponse({'status_code': VerifyStatus.CONFIRM_REPEATED})
 
-    if request.method == 'POST':
-        resend = request.POST.get('resend')
-        if resend == '1':
-            try:
-                code = ConfirmString.objects.get(user_id=this_user.id).code
-                send_email_confirm(this_user.email, code)
-            except:
-                return JsonResponse({'status_code': VerifyStatus.SEND_EMAIL_ERROR})
-            return JsonResponse({'status_code': SUCCESS})
-        elif resend != 0 or resend != 1:
-            return JsonResponse({'status_code': FORM_ERROR})
+    try:
+        code = ConfirmString.objects.get(user_id=this_user.id).code
+        send_email_confirm(this_user.email, code)
+    except:
+        this_user.delete()
+        return JsonResponse({'status_code': VerifyStatus.SEND_EMAIL_ERROR})
 
-    return JsonResponse({'status_code': DEFAULT})
+    return JsonResponse({'status_code': SUCCESS, 'email': this_user.email, 'username': this_user.username})
 
 
 @csrf_exempt
@@ -181,6 +175,36 @@ def upload_avatar(request):
 
 
 @csrf_exempt
+def get_session_user(request):
+    is_login = request.session.get('is_login')
+
+    if not is_login:
+        return JsonResponse({'status_code': GetSessionStatus.USER_NOT_LOGIN})
+
+    self_username = request.session.get('username')
+    self_user = get_object_or_404(User, username=self_username)
+
+    info = {
+        'is_login': is_login,
+        'username': self_user.username,
+        'email': self_user.email,
+        'type': self_user.user_type,
+        'confirmed': self_user.has_confirmed,
+        'description': self_user.user_desc,
+        'real_name': self_user.real_name,
+        'education': self_user.education_exp,
+        'job': self_user.job_unit
+    }
+
+    if self_user.avatar:
+        info['avatar'] = WEB_ROOT + self_user.avatar.url
+    else:
+        info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '2.png'
+
+    return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+
+
+@csrf_exempt
 def user_info(request):
     if request.method == 'POST':
         that_username = request.POST.get('username')
@@ -189,16 +213,17 @@ def user_info(request):
         info = {
             'username': that_user.username,
             'email': that_user.email,
-            'type': that_user.user_type,
             'description': that_user.user_desc,
-            'real_name': that_user.real_name,
-            'education': that_user.education_exp,
-            'job': that_user.job_unit
         }
         if that_user.avatar:
             info['avatar'] = WEB_ROOT + that_user.avatar.url
         else:
             info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '2.png'
+
+        self_username = request.session.get('username')
+        if self_username == that_username:
+            return JsonResponse({'status_code': UserInfoStatus.USER_SELF, 'user': json.dumps(info, ensure_ascii=False)})
+
         return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
 
 
@@ -220,3 +245,40 @@ def collect(request):
 
     else:
         return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def userinfo_edit(request):
+    if request.method == 'POST':
+
+        detail_form = DetailInfoForm(request.POST)
+
+        if detail_form.is_valid():
+            real_name = detail_form.cleaned_data.get('real_name')
+            education = detail_form.cleaned_data.get('education')
+            job = detail_form.cleaned_data.get('job')
+            description = detail_form.cleaned_data.get('description')
+
+            username = request.session.get('username')
+
+            if username:
+                try:
+                    user = User.objects.get(username=username)
+                except:
+                    return JsonResponse({'status_code': EditDetailInfo.USER_NOT_EXIST})
+
+                user.real_name = real_name
+                user.education_exp = education
+                user.job_unit = job
+                user.user_desc = description
+                user.save()
+
+                return JsonResponse({'status_code': SUCCESS})
+
+            else:
+                return JsonResponse({'status_code': EditDetailInfo.USER_NOT_LOGIN})
+
+        else:
+            return JsonResponse({'status_code': FORM_ERROR})
+
+    return JsonResponse({'status_code': DEFAULT})
