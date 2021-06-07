@@ -1,6 +1,6 @@
 from django import forms
 
-from audit.models import *
+from author_review.models import *
 
 
 class ArticleForm(forms.Form):

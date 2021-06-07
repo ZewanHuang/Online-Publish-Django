@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt  # 避免 csrf 错误
 
-from audit.models import Article
+from author_review.models import Article
 from django3.settings import *
 
 from .form import *

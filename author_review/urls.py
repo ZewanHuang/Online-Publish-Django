@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.urls import path
-from audit.views import *
+from author_review.views import *
 
 from django.conf.urls.static import static
 

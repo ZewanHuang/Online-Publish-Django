@@ -5,8 +5,8 @@ import json
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from audit.form import *
-from audit.models import *
+from author_review.form import *
+from author_review.models import *
 from django3.settings import WEB_ROOT
 from user.models import User
 from utils.hash import hash_code
