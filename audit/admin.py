@@ -7,6 +7,5 @@ from .models import *
 admin.site.register(Writer)
 admin.site.register(Category)
 admin.site.register(Article)
-admin.site.register(Reviewer)
-admin.site.register(ArticleWriter)
-admin.site.register(ArticleReview)
+admin.site.register(Review)
+admin.site.register(ArticleRemark)

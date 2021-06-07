@@ -48,6 +48,7 @@ class UserInfoStatus:
 class WriterStatus:
     EMAIL_NOT_CONFIRMED = '4001'  # 邮箱未验证
     MESSAGE_NOT_EXIST = '4002'  # 信息不完善
+    WRITER_EXIST = '4003'  # 已经申请为作者
 
 
 class ArticleStatus:
@@ -55,8 +56,8 @@ class ArticleStatus:
     ARTICLE_NOT_EXIST = '4002'  # 文章不存在
 
 
-class ReviewStatus:
-    REVIEW_EXIST = '4001'  # 已提交评论
+class RemarkStatus:
+    REMARK_EXIST = '4001'  # 已提交评论
     REVIEW_NOT_MATCH = '4002'  # 审稿人不能评论该文章
     AR_NOT_EXIST = '4003'  # 不存在审稿人或文章
 
