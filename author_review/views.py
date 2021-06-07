@@ -5,22 +5,29 @@ import json
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from audit.form import *
-from audit.models import *
+from .form import *
+from .models import *
 from django3.settings import WEB_ROOT
 from user.models import User
-from utils.hash import hash_code
 from utils.response_code import *
 
 
 @csrf_exempt
 def apply_writer(request):
-    if request.method == 'POST':
+    is_login = request.session.get('is_login')
+
+    if is_login:
         username = request.session.get('username')
+    else:
+        return JsonResponse({'status_code': WriterStatus.USER_NOT_LOGIN})
+
+    try:
         user = User.objects.get(username=username)
-        if user.has_confirmed:
-            if len(user.real_name) == 0 or len(user.education_exp) == 0 or len(user.job_unit) == 0 :
-                return JsonResponse({'status_code': WriterStatus.MESSAGE_NOT_EXIST})
+    except:
+        return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
+
+    if user.has_confirmed:
+        if user.real_name and user.education_exp and user.job_unit:
             if user.user_type == '作者':
                 return JsonResponse({'status_code': WriterStatus.WRITER_EXIST})
             else:
@@ -29,8 +36,11 @@ def apply_writer(request):
                 writer = Writer()
                 writer.writer = user
         else:
-            return JsonResponse({'status_code': WriterStatus.EMAIL_NOT_CONFIRMED})
-        return JsonResponse({'status_code': SUCCESS})
+            return JsonResponse({'status_code': WriterStatus.MESSAGE_NOT_EXIST})
+
+    else:
+        return JsonResponse({'status_code': WriterStatus.EMAIL_NOT_CONFIRMED})
+    return JsonResponse({'status_code': SUCCESS})
 
 
 @csrf_exempt
@@ -81,12 +91,12 @@ def remark(request):
         remark_form = RemarkForm(request.POST)
 
         if remark_form.is_valid():
-            review_name = remark_form.cleaned_data.get('review_name')
+            reviewer_name = remark_form.cleaned_data.get('reviewer_name')
             article_id = remark_form.cleaned_data.get('article_id')
-            new_remark = remark_form.cleaned_data.get('remark')
+            new_remark = remark_form.cleaned_data.get('author_review')
 
             try:
-                review = Review.objects.get(review__username=review_name)
+                review = Review.objects.get(review__username=reviewer_name)
                 article = Article.objects.get(article_id=article_id)
                 try:
                     same_remark = ArticleRemark.objects.get(review=review, article=article)
@@ -107,7 +117,7 @@ def remark(request):
 
 
 @csrf_exempt
-def writing(request):
+def writing_info(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         if request.session.get('is_login') and username == request.session.get('username'):
@@ -123,6 +133,32 @@ def writing(request):
                     info['avatar'] = WEB_ROOT + that_user.avatar.url
                 else:
                     info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '2.png'
+                return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+
+            else:
+                return JsonResponse({'status_code': WritingPageStatus.USER_NOT_AUTHOR})
+
+        else:
+            return JsonResponse({'status_code': WritingPageStatus.USER_NOT_LOGIN})
+
+
+@csrf_exempt
+def review_info(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        if request.session.get('is_login') and username == request.session.get('username'):
+            that_user = get_object_or_404(User, username=username)
+            if that_user.user_type == '审稿人':
+                info = {
+                    'username': that_user.username,
+                    'real_name': that_user.real_name,
+                    # 'education': that_user.education_exp,
+                    # 'job': that_user.job_unit
+                }
+                if that_user.avatar:
+                    info['avatar'] = WEB_ROOT + that_user.avatar.url
+                else:
+                    info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '1.png'
                 return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
 
             else:

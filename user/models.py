@@ -26,7 +26,7 @@ class User(models.Model):
 
     users_type = (
         ('reader', '读者'),
-        ('author', '作者'),
+        ('author_review', '作者'),
         ('reviewer', '审稿人'),
         ('edit', '编辑')
     )
