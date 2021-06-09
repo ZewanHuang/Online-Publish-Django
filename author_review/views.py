@@ -35,6 +35,7 @@ def apply_writer(request):
                 user.save()
                 writer = Writer()
                 writer.writer = user
+                writer.save()
         else:
             return JsonResponse({'status_code': WriterStatus.MESSAGE_NOT_EXIST})
 
