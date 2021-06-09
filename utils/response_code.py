@@ -77,3 +77,12 @@ class GetSessionStatus:
 class EditDetailInfo:
     USER_NOT_LOGIN = '4001'
     USER_NOT_EXIST = '4002'
+
+
+class FinishMesStatus:
+    MES_NOT_FOUND = '4001'
+
+
+class MesStatus:
+    USER_NOT_LOGIN = '4001'
+    USER_NOT_EXISTS = '4002'

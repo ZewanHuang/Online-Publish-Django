@@ -69,7 +69,7 @@ class ArticleRemark(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     status = models.SmallIntegerField(choices=((0, "未提交评论"), (1, "已提交评论")), default=0)
     remark = models.TextField(null=True, blank=True)
-    create_time = models.DateField(auto_now_add=True) # 创建审稿人和文章关系的时间
+    create_time = models.DateField(auto_now_add=True)  # 创建审稿人和文章关系的时间
 
     class Meta:
         db_table = 'article-review-relation'
