@@ -167,3 +167,4 @@ def review_info(request):
 
         else:
             return JsonResponse({'status_code': WritingPageStatus.USER_NOT_LOGIN})
+
