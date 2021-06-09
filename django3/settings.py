@@ -43,7 +43,11 @@ INSTALLED_APPS = [
 
     'user',
     'author_review',
+<<<<<<< HEAD
     'message',
+=======
+    'editor',
+>>>>>>> syt
 ]
 
 MIDDLEWARE = [
