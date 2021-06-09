@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(('user.urls', 'user'), namespace="user")),
     path('', include(('author_review.urls', 'author_review'), namespace="author_review")),
+    path('', include(('editor.urls', 'editor'), namespace="editor")),
 ]

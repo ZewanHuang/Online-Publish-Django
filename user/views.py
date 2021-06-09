@@ -1,8 +1,9 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt  # 避免 csrf 错误
 
-from author_review.models import Article
+from author_review.models import *
 from django3.settings import *
 
 from .form import *
@@ -229,11 +230,11 @@ def user_info(request):
 
 @csrf_exempt
 def collect(request):
-    if request.method == 'GET':
-        article_id = request.GET.get('article_id')
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
         username = request.session.get('username')
         user = User.objects.get(username=username)
-        article = Article.objects.filter(article_id=article_id)
+        article = Article.objects.filter(article_id=int(article_id))
         if article:
             new_collect = Collect()
             new_collect.user = user
@@ -245,6 +246,23 @@ def collect(request):
 
     else:
         return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def get_collect(request):
+    if request.method == 'POST':
+        username = request.session.get('username')
+        collections = Collect.objects.filter(user__username=username)
+        if collections:
+            json_list = []
+            for collection in list(collections):
+                json_item = {"article_id": collection.article_id}
+                json_list.append(json_item)
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+
+        return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+    return JsonResponse({'status_code': DEFAULT})
 
 
 @csrf_exempt
@@ -280,5 +298,71 @@ def userinfo_edit(request):
 
         else:
             return JsonResponse({'status_code': FORM_ERROR})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def search_list(request):
+    global articles
+    if request.method == 'POST':
+        writer_name = request.GET.get('writer_name')
+        key = request.GET.get('key')
+        category = request.GET.get('category')
+        title = request.GET.get('title')
+
+        if writer_name:
+            try:
+                writer = Writer.objects.get(writer__username=writer_name)
+            except:
+                return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
+            articles = Article.objects.filter(Q(writers__writer=writer) & Q(status=4))
+        elif key:
+            articles = Article.objects.filter(Q(Q(key__contains=key) | Q(title__contains=key)) & Q(status=4))
+        elif category:
+            articles = Article.objects.filter(Q(category__category=category) & Q(status=4))
+        elif title:
+            articles = Article.objects.filter(Q(title__contains=title) | Q(status=4))
+        else:
+            articles = Article.objects.filter(status=4)
+
+        if articles:
+            json_list = []
+            for article in list(articles):
+                json_item = {"article_id": article.article_id, "title": article.title,
+                             "abstract": article.abstract, "key": article.key,
+                             "content": article.content, "category": article.category.category,
+                             "writer": article.writers.all()[0].writer.username, "read_num": article.read_num,
+                             "download_num": article.download_num}
+
+                json_list.append(json_item)
+
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+        else:
+            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def search_exact(request):
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
+        try:
+            article = get_object_or_404(Article, article_id=int(article_id))
+        except:
+            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+        info = {
+            'title': article.title,
+            'abstract': article.abstract,
+            'key': article.key,
+            'content': article.content,
+            'category': article.category.category,
+            'writer': article.writers.all()[0].writer.username,
+            'read_num': article.read_num,
+            'download_num': article.download_num,
+            'article_address': article.article_address.url
+        }
+        return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
 
     return JsonResponse({'status_code': DEFAULT})

@@ -13,6 +13,9 @@ urlpatterns = [
     path('collect/', collect),
     path('get_session/', get_session_user),
     path('edit/', userinfo_edit),
+    path('search_list/', search_list),
+    path('search_exact/', search_exact),
+    path('get_collect/', get_collect),
 
     path('upload_image/', upload_avatar),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -45,7 +45,8 @@ class Article(models.Model):
     content = models.TextField()
     status = models.SmallIntegerField(choices=((0, "审核中"), (1, "审核通过"), (2, "审核不通过")
                                                , (3, "未发布"), (4, "已发布")), default=0)
-    is_popular = models.SmallIntegerField(choices=((0, "普通"), (1, "受欢迎")), blank=True)
+    read_num = models.IntegerField(default=0)
+    download_num = models.IntegerField(default=0)
     category = models.ForeignKey(to="Category", on_delete=models.CASCADE)
     article_address = models.FileField(upload_to=file_directory_path)
     create_time = models.DateTimeField(auto_now_add=True)
@@ -61,7 +62,7 @@ class Article(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.article_id
+        return str(self.article_id)
 
 
 class ArticleRemark(models.Model):
@@ -69,7 +70,7 @@ class ArticleRemark(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     status = models.SmallIntegerField(choices=((0, "未提交评论"), (1, "已提交评论")), default=0)
     remark = models.TextField(null=True, blank=True)
-    create_time = models.DateField(auto_now_add=True) # 创建审稿人和文章关系的时间
+    create_time = models.DateField(auto_now_add=True)  # 创建审稿人和文章关系的时间
 
     class Meta:
         db_table = 'article-review-relation'
