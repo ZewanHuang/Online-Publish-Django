@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'user',
     'author_review',
     'message',
+    'editor',
 ]
 
 MIDDLEWARE = [

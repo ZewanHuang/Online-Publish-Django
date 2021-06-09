@@ -1,3 +1,4 @@
+from django.db.models import Q, F
 from django.http import JsonResponse
 import json
 
@@ -84,6 +85,8 @@ def upload(request):
 
         return JsonResponse({'status_code': SUCCESS})
 
+    return JsonResponse({'status_code': DEFAULT})
+
 
 @csrf_exempt
 def remark(request):
@@ -92,7 +95,7 @@ def remark(request):
         remark_form = RemarkForm(request.POST)
 
         if remark_form.is_valid():
-            reviewer_name = remark_form.cleaned_data.get('reviewer_name')
+            reviewer_name = remark_form.cleaned_data.get('review_name')
             article_id = remark_form.cleaned_data.get('article_id')
             new_remark = remark_form.cleaned_data.get('author_review')
 
@@ -115,6 +118,8 @@ def remark(request):
             return JsonResponse({'status_code': FORM_ERROR})
 
         return JsonResponse({'status_code': SUCCESS})
+
+    return JsonResponse({'status_code': DEFAULT})
 
 
 @csrf_exempt
@@ -168,3 +173,156 @@ def review_info(request):
         else:
             return JsonResponse({'status_code': WritingPageStatus.USER_NOT_LOGIN})
 
+
+@csrf_exempt
+def popular_article(request):
+    if request.method == 'POST':
+        username = request.session.get('username')
+        articles = Article.objects.filter(writers__writer__username=username) \
+            .order_by((F('read_num') + F('download_num')).desc())
+        json_list = []
+        if articles:
+            for article in articles:
+                json_item = {"article_id": article.article_id, "title": article.title,
+                             "abstract": article.abstract, "key": article.key,
+                             "content": article.content, "category": article.category.category,
+                             "writer": article.writers.all()[0].writer.username, "read_num": article.read_num,
+                             "download_num": article.download_num, "article_address": article.article_address.url}
+                json_list.append(json_item)
+                if len(json_list) == 4: break
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+
+        return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def search_article(request):
+    global articles
+    if request.method == 'POST':
+        username = request.session.get('username')
+        key = request.POST.get('key')
+        category = request.POST.get('category')
+        title = request.POST.get('title')
+
+        if key:
+            articles = Article.objects.filter(Q(writers__writer__username=username) &
+                                              (Q(key__contains=key) or Q(title__contains=key)))
+        elif category:
+            articles = Article.objects.filter(Q(writers__writer__username=username) & Q(category__category=category))
+        elif title:
+            articles = Article.objects.filter(Q(writers__writer__username=username) & Q(title__contains=title))
+        else:
+            articles = Article.objects.filter(writers__writer__username=username)
+
+        if articles:
+            json_list = []
+            for article in articles:
+                json_item = {"article_id": article.article_id, "title": article.title,
+                             "abstract": article.abstract, "key": article.key,
+                             "content": article.content, "category": article.category.category,
+                             "writer": article.writers.all()[0].writer.username, "read_num": article.read_num,
+                             "download_num": article.download_num, "article_address": article.article_address.url}
+
+                json_list.append(json_item)
+
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+        else:
+            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def search_remark_list(request):
+    if request.method == 'POST':
+
+        username = request.session.get('username')
+        writer = Writer.objects.get(writer__username=username)
+        key = request.POST.get('key')
+        category = request.POST.get('category')
+        title = request.POST.get('title')
+
+        search_remark_list = ArticleRemark.objects.filter(Q(article__writers__writer_id=writer.id) & Q(status=1))
+        json_list = {}
+        if key:
+            for search_remark in list(search_remark_list):
+                if key in search_remark.article.key:
+                    json_item = {"article_id", search_remark.article.article_id,
+                                 "title", search_remark.article.title,
+                                 "remark", search_remark.remark,
+                                 "review", search_remark.review.username,
+                                 "update_time", search_remark.create_time}
+                    json_list.append(json_item)
+        elif category:
+            for search_remark in list(search_remark_list):
+                if category == search_remark.article.category.category:
+                    json_item = {"article_id", search_remark.article.article_id,
+                                 "title", search_remark.article.title,
+                                 "remark", search_remark.remark,
+                                 "review", search_remark.review.username,
+                                 "update_time", search_remark.create_time}
+                    json_list.append(json_item)
+        elif title:
+            for search_remark in list(search_remark_list):
+                if title in search_remark.article.title:
+                    json_item = {"article_id", search_remark.article.article_id,
+                                 "title", search_remark.article.title,
+                                 "remark", search_remark.remark,
+                                 "review", search_remark.review.username,
+                                 "update_time", search_remark.create_time}
+                    json_list.append(json_item)
+        else:
+            for search_remark in list(search_remark_list):
+                json_item = {"article_id", search_remark.article.article_id,
+                             "title", search_remark.article.title,
+                             "remark", search_remark.remark,
+                             "review", search_remark.review.username,
+                             "update_time", search_remark.create_time}
+                json_list.append(json_item)
+
+        return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def search_article_remark(request):
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
+
+        remarks = ArticleRemark.objects.filter(article__article_id__exact=article_id)
+
+        if remarks:
+            json_list = []
+            for this_remark in remarks:
+                json_item = {"remark": this_remark.remark,
+                             "review": this_remark.review.review.username,
+                             "update_time": this_remark.create_time.strftime("%Y-%m-%d %H:%M:%S")}
+                json_list.append(json_item)
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+
+        return JsonResponse({'status_code': RemarkStatus.AR_NOT_EXIST})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def search_review_remark(request):
+    if request.method == 'POST':
+        username = request.session.get('username')
+        remarks = ArticleRemark.objects.filter(review__review__username=username)
+        if remarks:
+            json_list = []
+            for this_remark in remarks:
+                json_item = {"article_id": this_remark.article.article_id,
+                             "title": this_remark.article.title,
+                             "status": this_remark.status,
+                             "remark": this_remark.remark,
+                             "update_time": this_remark.create_time.strftime("%Y-%m-%d %H:%M:%S")}
+                json_list.append(json_item)
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+
+        return JsonResponse({'status_code': RemarkStatus.AR_NOT_EXIST})
+
+    return JsonResponse({'status_code': DEFAULT})
