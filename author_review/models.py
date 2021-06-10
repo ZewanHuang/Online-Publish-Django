@@ -76,3 +76,23 @@ class ArticleRemark(models.Model):
         db_table = 'article-review-relation'
         verbose_name = '文章-审稿人关系表'
         verbose_name_plural = verbose_name
+
+
+class ArticleNews(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    select_status = (
+        (0, '修改了文章'),
+        (1, '修改成功了文章'),
+        (2, '提交了文章'),
+        (3, '成功发布了文章'),
+        (4, '审核了文章'),
+        (5, '删除了文章'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.SmallIntegerField(choices=select_status, default=2)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'tb_news'
+        verbose_name = '文章动态表'
+        verbose_name_plural = verbose_name

@@ -326,3 +326,21 @@ def search_review_remark(request):
         return JsonResponse({'status_code': RemarkStatus.AR_NOT_EXIST})
 
     return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def news(request):
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
+        all_news = ArticleNews.objects.filter(article_id=article_id).order_by('-create_time')
+        if all_news:
+            json_list = []
+            for one_new in all_news:
+                json_item = {"status": one_new.status, "title": one_new.article.title,
+                             "username": one_new.user.username,
+                             "create_time": one_new.create_time.strftime("%Y-%m-%d %H:%M:%S")}
+                json_list.append(json_item)
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+
+        return JsonResponse({'status_code': MesStatus.NEWS_NOT_EXISTS})
+    return JsonResponse({'status_code': DEFAULT})
