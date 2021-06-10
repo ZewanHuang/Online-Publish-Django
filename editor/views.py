@@ -2,6 +2,7 @@ import json
 import random
 import re
 
+from django.db.models import Q, F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
@@ -200,3 +201,58 @@ def delete_article(request):
             return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
 
     return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def count_person(request):
+    readers = User.objects.filter(user_type='读者').count()
+    writers = User.objects.filter(user_type='作者').count()
+    reviews = User.objects.filter(user_type='审稿人').count()
+
+    info = {
+        'reader': readers,
+        'writer': writers,
+        'review': reviews,
+    }
+    return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+
+
+@csrf_exempt
+def count_article(request):
+    article_count = [0 for x in range(0, 5)]
+
+    articles = Article.objects.all()
+    for article in articles:
+        if bool(article.article_address):
+            article_count[article.status] += 1
+
+    info = {
+        '审核中': article_count[0],
+        '已分配': article_count[1],
+        '待处理': article_count[2],
+        '审核不通过': article_count[3],
+        '已发布': article_count[4],
+    }
+    return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+
+
+@csrf_exempt
+def most_popular(request):
+    articles = Article.objects.all().order_by((F('read_num') + F('download_num')).desc())
+    for article in articles:
+        if bool(article.article_address):
+            info = {
+                "article_id": article.article_id,
+                "title": article.title,
+                "abstract": article.abstract,
+                "key": article.key,
+                "content": article.content,
+                "status": article.status,
+                "category": article.category.category,
+                "writer": article.writers.all()[0].writer.username,
+                "read_num": article.read_num,
+                "download_num": article.download_num,
+                "article_address": article.article_address.url
+            }
+            return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+    return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
