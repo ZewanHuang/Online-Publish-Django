@@ -249,6 +249,36 @@ def collect(request):
 
 
 @csrf_exempt
+def user_collections(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        collections = Collect.objects.filter(user__username=username)
+        if collections:
+            json_list = []
+            for collection in list(collections):
+                aid = collection.article_id
+                article = Article.objects.get(article_id=aid)
+                item = {
+                    'article_id': article.article_id,
+                    'title': article.title,
+                    'abstract': article.abstract,
+                    'key': article.key,
+                    'content': article.content,
+                    'category': article.category.category,
+                    'writer': article.writers.all()[0].writer.username,
+                    'article_address': article.article_address.url,
+                    'writer_email': article.writers.all()[0].writer.email,
+                }
+                json_list.append(item)
+
+            return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(json_list)})
+        else:
+            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
 def get_collect(request):
     if request.method == 'POST':
         username = request.session.get('username')

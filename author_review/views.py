@@ -269,41 +269,41 @@ def search_remark_list(request):
         title = request.POST.get('title')
 
         search_remark_list = ArticleRemark.objects.filter(Q(article__writers__writer_id=writer.id) & Q(status=1))
-        json_list = {}
+        json_list = []
         if key:
             for search_remark in list(search_remark_list):
                 if key in search_remark.article.key:
-                    json_item = {"article_id", search_remark.article.article_id,
-                                 "title", search_remark.article.title,
-                                 "remark", search_remark.remark,
-                                 "review", search_remark.review.username,
-                                 "update_time", search_remark.create_time}
+                    json_item = {"article_id": search_remark.article.article_id,
+                                 "title": search_remark.article.title,
+                                 "remark": search_remark.remark,
+                                 "review": search_remark.review.username,
+                                 "update_time": search_remark.create_time}
                     json_list.append(json_item)
         elif category:
             for search_remark in list(search_remark_list):
                 if category == search_remark.article.category.category:
-                    json_item = {"article_id", search_remark.article.article_id,
-                                 "title", search_remark.article.title,
-                                 "remark", search_remark.remark,
-                                 "review", search_remark.review.username,
-                                 "update_time", search_remark.create_time}
+                    json_item = {"article_id": search_remark.article.article_id,
+                                 "title": search_remark.article.title,
+                                 "remark": search_remark.remark,
+                                 "review": search_remark.review.username,
+                                 "update_time": search_remark.create_time}
                     json_list.append(json_item)
         elif title:
             for search_remark in list(search_remark_list):
                 if title in search_remark.article.title:
-                    json_item = {"article_id", search_remark.article.article_id,
-                                 "title", search_remark.article.title,
-                                 "remark", search_remark.remark,
-                                 "review", search_remark.review.username,
-                                 "update_time", search_remark.create_time}
+                    json_item = {"article_id": search_remark.article.article_id,
+                                 "title": search_remark.article.title,
+                                 "remark": search_remark.remark,
+                                 "review": search_remark.review.username,
+                                 "update_time": search_remark.create_time}
                     json_list.append(json_item)
         else:
             for search_remark in list(search_remark_list):
-                json_item = {"article_id", search_remark.article.article_id,
-                             "title", search_remark.article.title,
-                             "remark", search_remark.remark,
-                             "review", search_remark.review.username,
-                             "update_time", search_remark.create_time}
+                json_item = {"article_id": search_remark.article.article_id,
+                             "title": search_remark.article.title,
+                             "remark": search_remark.remark,
+                             "review": search_remark.review.username,
+                             "update_time": search_remark.create_time}
                 json_list.append(json_item)
 
         return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
