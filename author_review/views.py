@@ -77,9 +77,17 @@ def upload(request):
                     for writer in writers:
                         same_writer = Writer.objects.get(writer__real_name=writer)
                         new_article.writers.add(same_writer)
+                    new_article.save()
+
                 except:
                     new_article.delete()
-                    return JsonResponse({'status_code': '4002'})
+                    return JsonResponse({'status_code': '4002'})     
+
+                new_message = ArticleNews()
+                new_message.article = new_article
+                new_message.user = User.objects.get(username=request.session.get('username'))
+                new_message.status = 2
+                new_message.save()
 
             else:
                 return JsonResponse({'status_code': LogoutStatus.USER_NOT_LOGIN})
@@ -132,6 +140,11 @@ def remark(request):
                         same_remark.remark = new_remark
                         same_remark.status = 1
                         same_remark.save()
+                        new_message = ArticleNews()
+                        new_message.article = article
+                        new_message.user = review
+                        new_message.status = 4
+                        new_message.save()
                     else:
                         return JsonResponse({'status_code': RemarkStatus.REMARK_EXIST})
                 except:
@@ -350,4 +363,22 @@ def search_review_remark(request):
 
         return JsonResponse({'status_code': RemarkStatus.AR_NOT_EXIST})
 
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def news(request):
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
+        all_news = ArticleNews.objects.filter(article_id=article_id).order_by('-create_time')
+        if all_news:
+            json_list = []
+            for one_new in all_news:
+                json_item = {"status": one_new.status, "title": one_new.article.title,
+                             "username": one_new.user.username,
+                             "create_time": one_new.create_time.strftime("%Y-%m-%d %H:%M:%S")}
+                json_list.append(json_item)
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+
+        return JsonResponse({'status_code': MesStatus.NEWS_NOT_EXISTS})
     return JsonResponse({'status_code': DEFAULT})

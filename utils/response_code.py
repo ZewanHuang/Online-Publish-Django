@@ -96,3 +96,4 @@ class FinishMesStatus:
 class MesStatus:
     USER_NOT_LOGIN = '4001'
     USER_NOT_EXISTS = '4002'
+    NEWS_NOT_EXISTS = '4003'

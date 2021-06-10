@@ -16,4 +16,5 @@ urlpatterns = [
     path('article_remark/', search_article_remark),
     path('review_remark/', search_review_remark),
     path('upload_article/', upload_article),
+    path('news/', news),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

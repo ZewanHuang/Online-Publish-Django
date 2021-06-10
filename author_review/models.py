@@ -43,8 +43,8 @@ class Article(models.Model):
     abstract = models.TextField()
     key = models.CharField(max_length=100)
     content = models.TextField()
-    status = models.SmallIntegerField(choices=((0, "审核中"), (1, "审核通过"), (2, "审核不通过")
-                                               , (3, "未发布"), (4, "已发布")), default=0)
+    status = models.SmallIntegerField(choices=((0, "审核中"), (1, "已分配"), (2, "待处理")
+                                               , (3, "审核不通过"), (4, "已发布")), default=0)
     read_num = models.IntegerField(default=0)
     download_num = models.IntegerField(default=0)
     category = models.ForeignKey(to="Category", on_delete=models.CASCADE)
@@ -75,4 +75,24 @@ class ArticleRemark(models.Model):
     class Meta:
         db_table = 'article-review-relation'
         verbose_name = '文章-审稿人关系表'
+        verbose_name_plural = verbose_name
+
+
+class ArticleNews(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    select_status = (
+        (0, '修改了文章'),
+        (1, '修改成功了文章'),
+        (2, '提交了文章'),
+        (3, '成功发布了文章'),
+        (4, '审核了文章'),
+        (5, '删除了文章'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.SmallIntegerField(choices=select_status, default=2)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'tb_news'
+        verbose_name = '文章动态表'
         verbose_name_plural = verbose_name
