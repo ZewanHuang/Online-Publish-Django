@@ -211,8 +211,6 @@ def user_info(request):
         that_username = request.POST.get('username')
         that_user = get_object_or_404(User, username=that_username)
 
-        print(that_username)
-
         info = {
             'username': that_user.username,
             'email': that_user.email,
@@ -308,17 +306,18 @@ def userinfo_edit(request):
 def search_list(request):
     global articles
     if request.method == 'POST':
-        writer_name = request.GET.get('username')
-        key = request.GET.get('key')
-        category = request.GET.get('category')
-        title = request.GET.get('title')
+        writer_name = request.POST.get('username')
+        key = request.POST.get('key')
+        category = request.POST.get('category')
+        title = request.POST.get('title')
 
         if writer_name:
             try:
                 writer = Writer.objects.get(writer__username=writer_name)
             except:
                 return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
-            articles = Article.objects.filter(Q(writers__writer=writer) & Q(status=4))
+            # articles = Article.objects.filter(Q(writers__writer=writer) & Q(status=4))
+            articles = Article.objects.filter(writers__writer__username=writer_name)
         elif key:
             articles = Article.objects.filter(Q(Q(key__contains=key) | Q(title__contains=key)) & Q(status=4))
         elif category:
@@ -331,13 +330,14 @@ def search_list(request):
         if articles:
             json_list = []
             for article in list(articles):
-                json_item = {"article_id": article.article_id, "title": article.title,
-                             "abstract": article.abstract, "key": article.key,
-                             "content": article.content, "category": article.category.category,
-                             "writer": article.writers.all()[0].writer.username, "read_num": article.read_num,
-                             "download_num": article.download_num}
+                if article.article_address:
+                    json_item = {"article_id": article.article_id, "title": article.title,
+                                 "abstract": article.abstract, "key": article.key,
+                                 "content": article.content, "category": article.category.category,
+                                 "writer": article.writers.all()[0].writer.username, "read_num": article.read_num,
+                                 "download_num": article.download_num}
 
-                json_list.append(json_item)
+                    json_list.append(json_item)
 
             return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(json_list)})
         else:
@@ -349,10 +349,7 @@ def search_list(request):
 def search_exact(request):
     if request.method == 'POST':
         article_id = request.POST.get('article_id')
-        try:
-            article = get_object_or_404(Article, article_id=int(article_id))
-        except:
-            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+        article = get_object_or_404(Article, article_id=int(article_id))
 
         info = {
             'title': article.title,
@@ -360,11 +357,11 @@ def search_exact(request):
             'key': article.key,
             'content': article.content,
             'category': article.category.category,
-            'writer': article.writers.all()[0].writer.username,
+            'writer': article.writers.all()[0].writer.real_name,
             'read_num': article.read_num,
             'download_num': article.download_num,
             'article_address': article.article_address.url
         }
-        return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+        return JsonResponse({'status_code': SUCCESS, 'article': json.dumps(info, ensure_ascii=False)})
 
     return JsonResponse({'status_code': DEFAULT})
