@@ -181,6 +181,11 @@ def update_status(request):
                 article.status = 2
             elif "已发布" == str_status:
                 article.status = 4
+                new_message = ArticleNews()
+                new_message.article = article
+                new_message.user = User.objects.get(username=request.session.get('username'))
+                new_message.status = 3
+                new_message.save()
             article.save()
             return JsonResponse({'status_code': SUCCESS})
         except:
@@ -196,6 +201,11 @@ def delete_article(request):
         try:
             article = Article.objects.get(article_id=article_id)
             article.delete()
+            new_message = ArticleNews()
+            new_message.article = article
+            new_message.user = User.objects.get(username=request.session.get('username'))
+            new_message.status = 5
+            new_message.save()
             return JsonResponse({'status_code': SUCCESS})
         except:
             return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})

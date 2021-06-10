@@ -76,6 +76,13 @@ def upload(request):
                 for writer in writers:
                     same_writer = Writer.objects.get(username=writer)
                     new_article.writers.add(same_writer)
+                    new_article.save()
+
+                new_message = ArticleNews()
+                new_message.article = new_article
+                new_message.user = User.objects.get(username=request.session.get('username'))
+                new_message.status = 2
+                new_message.save()
 
             else:
                 return JsonResponse({'status_code': LogoutStatus.USER_NOT_LOGIN})
@@ -108,6 +115,11 @@ def remark(request):
                         same_remark.remark = new_remark
                         same_remark.status = 1
                         same_remark.save()
+                        new_message = ArticleNews()
+                        new_message.article = article
+                        new_message.user = review
+                        new_message.status = 4
+                        new_message.save()
                     else:
                         return JsonResponse({'status_code': RemarkStatus.REMARK_EXIST})
                 except:
