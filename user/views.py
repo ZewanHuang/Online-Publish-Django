@@ -211,6 +211,8 @@ def user_info(request):
         that_username = request.POST.get('username')
         that_user = get_object_or_404(User, username=that_username)
 
+        print(that_username)
+
         info = {
             'username': that_user.username,
             'email': that_user.email,
@@ -258,7 +260,7 @@ def get_collect(request):
             for collection in list(collections):
                 json_item = {"article_id": collection.article_id}
                 json_list.append(json_item)
-            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+            return JsonResponse({'status_code': SUCCESS, 'collections': json.dumps(json_list)})
 
         return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
 
@@ -306,7 +308,7 @@ def userinfo_edit(request):
 def search_list(request):
     global articles
     if request.method == 'POST':
-        writer_name = request.GET.get('writer_name')
+        writer_name = request.GET.get('username')
         key = request.GET.get('key')
         category = request.GET.get('category')
         title = request.GET.get('title')
@@ -337,7 +339,7 @@ def search_list(request):
 
                 json_list.append(json_item)
 
-            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+            return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(json_list)})
         else:
             return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
     return JsonResponse({'status_code': DEFAULT})

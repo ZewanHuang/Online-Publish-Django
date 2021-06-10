@@ -57,7 +57,7 @@ def upload(request):
             key = article_form.cleaned_data.get('key')
             content = article_form.cleaned_data.get('content')
             str_category = article_form.cleaned_data.get('category')
-            article_address = article_form.cleaned_data.get('article_address')
+            # article_address = article_form.cleaned_data.get('article_address')
             str_writer = article_form.cleaned_data.get('writers')
 
             if request.session.get('is_login'):
@@ -66,16 +66,20 @@ def upload(request):
                 new_article.abstract = abstract
                 new_article.key = key
                 new_article.content = content
-                new_article.article_address = article_address
+                # new_article.article_address = article_address
 
                 same_category = Category.objects.get(category=str_category)
                 new_article.category = same_category
                 new_article.save()
 
-                writers = str_writer.split(',')
-                for writer in writers:
-                    same_writer = Writer.objects.get(username=writer)
-                    new_article.writers.add(same_writer)
+                try:
+                    writers = str_writer.split(',')
+                    for writer in writers:
+                        same_writer = Writer.objects.get(writer__real_name=writer)
+                        new_article.writers.add(same_writer)
+                except:
+                    new_article.delete()
+                    return JsonResponse({'status_code': '4002'})
 
             else:
                 return JsonResponse({'status_code': LogoutStatus.USER_NOT_LOGIN})
@@ -83,9 +87,29 @@ def upload(request):
         else:
             return JsonResponse({'status_code': FORM_ERROR})
 
-        return JsonResponse({'status_code': SUCCESS})
+        return JsonResponse({'status_code': SUCCESS, 'articleID': new_article.article_id})
 
     return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def upload_article(request):
+
+    this_article_id = request.POST.get('articleID')
+    upload_article_form = UploadArticleForm(request.POST, request.FILES)
+    if upload_article_form.is_valid():
+        try:
+            this_article = Article.objects.get(article_id=this_article_id)
+            this_article.article_address.delete()
+            this_article.article_address = request.FILES.getlist('file')[-1]
+            this_article.save()
+
+            return JsonResponse({'status_code': '2000'})
+
+        except:
+            return JsonResponse({'status_code': '4001'})
+    else:
+        return JsonResponse({'status_code': '4002'})
 
 
 @csrf_exempt
@@ -219,15 +243,16 @@ def search_article(request):
         if articles:
             json_list = []
             for article in articles:
-                json_item = {"article_id": article.article_id, "title": article.title,
-                             "abstract": article.abstract, "key": article.key,
-                             "content": article.content, "category": article.category.category,
-                             "writer": article.writers.all()[0].writer.username, "read_num": article.read_num,
-                             "download_num": article.download_num, "article_address": article.article_address.url}
+                if article.article_address:
+                    json_item = {"article_id": article.article_id, "title": article.title,
+                                 "abstract": article.abstract, "key": article.key,
+                                 "content": article.content, "category": article.category.category,
+                                 "writer": article.writers.all()[0].writer.username, "read_num": article.read_num,
+                                 "download_num": article.download_num, "article_address": article.article_address.url}
 
-                json_list.append(json_item)
+                    json_list.append(json_item)
 
-            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+            return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(json_list)})
         else:
             return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
     return JsonResponse({'status_code': DEFAULT})

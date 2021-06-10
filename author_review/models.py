@@ -7,7 +7,7 @@ from user.models import User
 
 def file_directory_path(instance, filename):
     # 文件上传到 MEDIA_ROOT/avatar/user_<id>/<filename>目录中
-    return 'file/{0}'.format(filename)
+    return 'article/article_{0}/{1}'.format(instance.article_id, filename)
 
 
 class Writer(models.Model):
@@ -48,7 +48,7 @@ class Article(models.Model):
     read_num = models.IntegerField(default=0)
     download_num = models.IntegerField(default=0)
     category = models.ForeignKey(to="Category", on_delete=models.CASCADE)
-    article_address = models.FileField(upload_to=file_directory_path)
+    article_address = models.FileField(upload_to=file_directory_path, blank=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(null=True, blank=True)
     review_time = models.DateTimeField(null=True, blank=True)
