@@ -43,6 +43,8 @@ INSTALLED_APPS = [
 
     'user',
     'author_review',
+    'message',
+    'editor',
 ]
 
 MIDDLEWARE = [
@@ -143,10 +145,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Send mail configuration
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.126.com'
+EMAIL_HOST = 'smtp.163.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = 'zewanhuang@126.com'
-EMAIL_HOST_PASSWORD = 'KZJHRSLTVTCRIJVN'    # 邮箱 SMTP 授权码
+EMAIL_HOST_USER = 'zewantop@163.com'
+EMAIL_HOST_PASSWORD = 'VWBEHCXOSFHKBAGN'    # 邮箱 SMTP 授权码
 
 CONFIRM_DAYS = 3    # confirm valid days
 

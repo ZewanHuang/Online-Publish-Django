@@ -13,6 +13,14 @@ urlpatterns = [
     path('collect/', collect),
     path('get_session/', get_session_user),
     path('edit/', userinfo_edit),
+    path('search_list/', search_list),
+    path('search_exact/', search_exact),
+    path('get_collect/', get_collect),
+    path('collections/', user_collections),
+
+    path('most_popular/', most_popular),
 
     path('upload_image/', upload_avatar),
+
+    path('statistic/', statistic),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

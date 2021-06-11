@@ -7,7 +7,7 @@ from user.models import User
 
 def file_directory_path(instance, filename):
     # 文件上传到 MEDIA_ROOT/avatar/user_<id>/<filename>目录中
-    return 'file/{0}'.format(filename)
+    return 'article/article_{0}/{1}'.format(instance.article_id, filename)
 
 
 class Writer(models.Model):
@@ -43,11 +43,12 @@ class Article(models.Model):
     abstract = models.TextField()
     key = models.CharField(max_length=100)
     content = models.TextField()
-    status = models.SmallIntegerField(choices=((0, "审核中"), (1, "审核通过"), (2, "审核不通过")
-                                               , (3, "未发布"), (4, "已发布")), default=0)
-    is_popular = models.SmallIntegerField(choices=((0, "普通"), (1, "受欢迎")), blank=True)
+    status = models.SmallIntegerField(choices=((0, "审核中"), (1, "已分配"), (2, "待处理")
+                                               , (3, "审核不通过"), (4, "已发布")), default=0)
+    read_num = models.IntegerField(default=0)
+    download_num = models.IntegerField(default=0)
     category = models.ForeignKey(to="Category", on_delete=models.CASCADE)
-    article_address = models.FileField(upload_to=file_directory_path)
+    article_address = models.FileField(upload_to=file_directory_path, blank=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(null=True, blank=True)
     review_time = models.DateTimeField(null=True, blank=True)
@@ -61,7 +62,7 @@ class Article(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.article_id
+        return str(self.article_id)
 
 
 class ArticleRemark(models.Model):
@@ -69,9 +70,29 @@ class ArticleRemark(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     status = models.SmallIntegerField(choices=((0, "未提交评论"), (1, "已提交评论")), default=0)
     remark = models.TextField(null=True, blank=True)
-    create_time = models.DateField(auto_now_add=True) # 创建审稿人和文章关系的时间
+    create_time = models.DateField(auto_now_add=True)  # 创建审稿人和文章关系的时间
 
     class Meta:
         db_table = 'article-review-relation'
         verbose_name = '文章-审稿人关系表'
+        verbose_name_plural = verbose_name
+
+
+class ArticleNews(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    select_status = (
+        (0, '修改了文章'),
+        (1, '修改成功了文章'),
+        (2, '提交了文章'),
+        (3, '成功发布了文章'),
+        (4, '审核了文章'),
+        (5, '删除了文章'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.SmallIntegerField(choices=select_status, default=2)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'tb_news'
+        verbose_name = '文章动态表'
         verbose_name_plural = verbose_name

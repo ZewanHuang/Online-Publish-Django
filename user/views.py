@@ -1,8 +1,9 @@
+from django.db.models import Q, F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt  # 避免 csrf 错误
 
-from author_review.models import Article
+from author_review.models import *
 from django3.settings import *
 
 from .form import *
@@ -193,7 +194,7 @@ def get_session_user(request):
         'description': self_user.user_desc,
         'real_name': self_user.real_name,
         'education': self_user.education_exp,
-        'job': self_user.job_unit
+        'job': self_user.job_unit,
     }
 
     if self_user.avatar:
@@ -229,11 +230,11 @@ def user_info(request):
 
 @csrf_exempt
 def collect(request):
-    if request.method == 'GET':
-        article_id = request.GET.get('article_id')
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
         username = request.session.get('username')
         user = User.objects.get(username=username)
-        article = Article.objects.filter(article_id=article_id)
+        article = Article.objects.filter(article_id=int(article_id))
         if article:
             new_collect = Collect()
             new_collect.user = user
@@ -245,6 +246,53 @@ def collect(request):
 
     else:
         return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def user_collections(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        collections = Collect.objects.filter(user__username=username)
+        if collections:
+            json_list = []
+            for collection in list(collections):
+                aid = collection.article_id
+                article = Article.objects.get(article_id=aid)
+                item = {
+                    'article_id': article.article_id,
+                    'title': article.title,
+                    'abstract': article.abstract,
+                    'key': article.key,
+                    'content': article.content,
+                    'category': article.category.category,
+                    'writer': article.writers.all()[0].writer.username,
+                    'article_address': article.article_address.url,
+                    'writer_email': article.writers.all()[0].writer.email,
+                }
+                json_list.append(item)
+
+            return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(json_list)})
+        else:
+            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def get_collect(request):
+    if request.method == 'POST':
+        username = request.session.get('username')
+        collections = Collect.objects.filter(user__username=username)
+        if collections:
+            json_list = []
+            for collection in list(collections):
+                json_item = {"article_id": collection.article_id}
+                json_list.append(json_item)
+            return JsonResponse({'status_code': SUCCESS, 'collections': json.dumps(json_list)})
+
+        return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+    return JsonResponse({'status_code': DEFAULT})
 
 
 @csrf_exempt
@@ -282,3 +330,134 @@ def userinfo_edit(request):
             return JsonResponse({'status_code': FORM_ERROR})
 
     return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def search_list(request):
+    global articles
+    if request.method == 'POST':
+        writer_name = request.POST.get('realName')
+        key = request.POST.get('key')
+        category = request.POST.get('category')
+        title = request.POST.get('title')
+
+        if writer_name:
+            try:
+                writer = Writer.objects.get(writer__real_name=writer_name)
+            except:
+                return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
+            # articles = Article.objects.filter(Q(writers__writer=writer) & Q(status=4))
+            articles = Article.objects.filter(writer__real_name=writer_name)
+        elif key:
+            articles = Article.objects.filter(Q(Q(key__contains=key) | Q(title__contains=key)) & Q(status=4))
+        elif category:
+            articles = Article.objects.filter(Q(category__category=category) & Q(status=4))
+        elif title:
+            articles = Article.objects.filter(Q(title__contains=title) | Q(status=4))
+        else:
+            articles = Article.objects.filter(status=4)
+
+        if articles:
+            json_list = []
+            for article in list(articles):
+                if article.article_address:
+                    writers_name = []
+                    for writer in article.writers.all():
+                        writers_name.append(writer.writer.real_name)
+
+                    json_item = {"article_id": article.article_id,
+                                 "title": article.title,
+                                 "abstract": article.abstract,
+                                 "key": article.key,
+                                 "content": article.content,
+                                 "category": article.category.category,
+                                 "writer": ','.join(writers_name),
+                                 "read_num": article.read_num,
+                                 "download_num": article.download_num}
+
+                    json_list.append(json_item)
+
+            return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(json_list)})
+        else:
+            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def search_exact(request):
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
+        remark_id = request.POST.get('remark_id')
+
+        if article_id:
+            article = get_object_or_404(Article, article_id=int(article_id))
+        elif remark_id:
+            remark = get_object_or_404(ArticleRemark, id=int(remark_id))
+            article = remark.article
+        else:
+            return JsonResponse({'status_code': '4001'})
+
+        info = {
+            'title': article.title,
+            'abstract': article.abstract,
+            'key': article.key,
+            'content': article.content,
+            'category': article.category.category,
+            'writer': article.writers.all()[0].writer.real_name,
+            'read_num': article.read_num,
+            'download_num': article.download_num,
+            'article_address': article.article_address.url
+        }
+        return JsonResponse({'status_code': SUCCESS, 'article': json.dumps(info, ensure_ascii=False)})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def most_popular(request):
+    articles = Article.objects.filter(status=4).order_by((F('read_num') + F('download_num')).desc())
+    idx = 0
+
+    article_list = []
+    for article in articles:
+        if bool(article.article_address):
+            writers_name = []
+            for writer in article.writers.all():
+                writers_name.append(writer.writer.real_name)
+            info = {
+                "aid": article.article_id,
+                "title": article.title,
+                "abstract": article.abstract,
+                "key": article.key,
+                "content": article.content,
+                "status": article.status,
+                "category": article.category.category,
+                "writer": ','.join(writers_name),
+                "read_num": article.read_num,
+                "download_num": article.download_num,
+                "article_address": article.article_address.url
+            }
+            article_list.append(info)
+
+            if (++idx) >= 10:
+                break
+
+    if article_list:
+        return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(article_list, ensure_ascii=False)})
+    else:
+        return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+
+@csrf_exempt
+def statistic(request):
+    readers = User.objects.filter(user_type='读者').count()
+    writers = User.objects.filter(user_type='作者').count()
+    reviews = User.objects.filter(user_type='审稿人').count()
+    articles = Article.objects.count()
+
+    return JsonResponse({
+        'readers': readers,
+        'writers': writers,
+        'reviews': reviews,
+        'articles': articles
+    })

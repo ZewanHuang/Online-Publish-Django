@@ -26,4 +26,6 @@ urlpatterns = [
     path('api/admin/', admin.site.urls),
     path('api/', include(('user.urls', 'user'), namespace="user")),
     path('api/', include(('author_review.urls', 'author_review'), namespace="author_review")),
+    path('api/message/', include(('message.urls', 'message'), namespace='message')),
+    path('api/editor/', include(('editor.urls', 'editor'), namespace="editor")),
 ]

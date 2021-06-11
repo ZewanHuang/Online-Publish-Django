@@ -54,6 +54,15 @@ class WriterStatus:
     USER_NOT_EXIST = '4005'
 
 
+class EditorStatus:
+    EMAIL_NOT_CONFIRMED = '4001'  # 邮箱未验证
+    MESSAGE_NOT_EXIST = '4002'  # 信息不完善
+    Editor_EXIST = '4003'  # 已经申请为编辑
+    USER_NOT_LOGIN = '4004'
+    USER_NOT_EXIST = '4005'
+    ADD_REVIEW_ERROR = '4006'  # 添加审稿人失败
+
+
 class ArticleStatus:
     UPLOAD_FAILURE = '4001'  # 上传失败
     ARTICLE_NOT_EXIST = '4002'  # 文章不存在
@@ -68,6 +77,7 @@ class RemarkStatus:
 class WritingPageStatus:
     USER_NOT_LOGIN = '4001'
     USER_NOT_AUTHOR = '4002'
+    USER_NOT_EDITOR = '4003'
 
 
 class GetSessionStatus:
@@ -77,3 +87,13 @@ class GetSessionStatus:
 class EditDetailInfo:
     USER_NOT_LOGIN = '4001'
     USER_NOT_EXIST = '4002'
+
+
+class FinishMesStatus:
+    MES_NOT_FOUND = '4001'
+
+
+class MesStatus:
+    USER_NOT_LOGIN = '4001'
+    USER_NOT_EXISTS = '4002'
+    NEWS_NOT_EXISTS = '4003'
