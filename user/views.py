@@ -447,3 +447,17 @@ def most_popular(request):
     else:
         return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
 
+
+@csrf_exempt
+def statistic(request):
+    readers = User.objects.filter(user_type='读者').count()
+    writers = User.objects.filter(user_type='作者').count()
+    reviews = User.objects.filter(user_type='审稿人').count()
+    articles = Article.objects.count()
+
+    return JsonResponse({
+        'readers': readers,
+        'writers': writers,
+        'reviews': reviews,
+        'articles': articles
+    })

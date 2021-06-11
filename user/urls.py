@@ -21,4 +21,6 @@ urlpatterns = [
     path('most_popular/', most_popular),
 
     path('upload_image/', upload_avatar),
+
+    path('statistic/', statistic),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
