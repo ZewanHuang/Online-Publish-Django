@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt  # 避免 csrf 错误
@@ -403,3 +403,39 @@ def search_exact(request):
         return JsonResponse({'status_code': SUCCESS, 'article': json.dumps(info, ensure_ascii=False)})
 
     return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def most_popular(request):
+    articles = Article.objects.filter(status=4).order_by((F('read_num') + F('download_num')).desc())
+    idx = 0
+
+    article_list = []
+    for article in articles:
+        if bool(article.article_address):
+            writers_name = []
+            for writer in article.writers.all():
+                writers_name.append(writer.writer.real_name)
+            info = {
+                "aid": article.article_id,
+                "title": article.title,
+                "abstract": article.abstract,
+                "key": article.key,
+                "content": article.content,
+                "status": article.status,
+                "category": article.category.category,
+                "writer": ','.join(writers_name),
+                "read_num": article.read_num,
+                "download_num": article.download_num,
+                "article_address": article.article_address.url
+            }
+            article_list.append(info)
+
+            if (++idx) >= 10:
+                break
+
+    if article_list:
+        return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(article_list, ensure_ascii=False)})
+    else:
+        return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+

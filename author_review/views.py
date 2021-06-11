@@ -414,3 +414,42 @@ def add_download_times(request):
         return JsonResponse({'status_code': '2000'})
 
     return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def self_popular(request):
+    try:
+        username = request.session.get('username')
+    except:
+        return JsonResponse({'status_code': '4001'})
+
+    articles = Article.objects.filter(status=4, writers__writer__username=username).order_by((F('read_num') + F('download_num')).desc())
+    idx = 0
+    article_list = []
+    for article in articles:
+        if bool(article.article_address):
+            writers_name = []
+            for writer in article.writers.all():
+                writers_name.append(writer.writer.real_name)
+            info = {
+                "aid": article.article_id,
+                "title": article.title,
+                "abstract": article.abstract,
+                "key": article.key,
+                "content": article.content,
+                "status": article.status,
+                "category": article.category.category,
+                "writer": ','.join(writers_name),
+                "read_num": article.read_num,
+                "download_num": article.download_num,
+                "article_address": article.article_address.url
+            }
+            article_list.append(info)
+
+            if (++idx) >= 4:
+                break
+
+    if article_list:
+        return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(article_list, ensure_ascii=False)})
+    else:
+        return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})

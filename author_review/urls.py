@@ -20,4 +20,6 @@ urlpatterns = [
 
     path('add_read_times/', add_read_times),
     path('add_download_times/', add_download_times),
+
+    path('self_popular/', self_popular),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

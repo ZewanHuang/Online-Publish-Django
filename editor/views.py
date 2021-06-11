@@ -386,31 +386,6 @@ def count(request):
 
 
 @csrf_exempt
-def most_popular(request):
-    articles = Article.objects.all().order_by((F('read_num') + F('download_num')).desc())
-    for article in articles:
-        if bool(article.article_address):
-            writers_name = []
-            for writer in article.writers.all():
-                writers_name.append(writer.writer.real_name)
-            info = {
-                "article_id": article.article_id,
-                "title": article.title,
-                "abstract": article.abstract,
-                "key": article.key,
-                "content": article.content,
-                "status": article.status,
-                "category": article.category.category,
-                "writer": ','.join(writers_name),
-                "read_num": article.read_num,
-                "download_num": article.download_num,
-                "article_address": article.article_address.url
-            }
-            return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
-    return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
-
-
-@csrf_exempt
 def get_readers(request):
     users = User.objects.filter(user_type='读者').order_by((F('c_time')).desc())
     user_list = []

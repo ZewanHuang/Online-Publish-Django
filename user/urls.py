@@ -18,5 +18,7 @@ urlpatterns = [
     path('get_collect/', get_collect),
     path('collections/', user_collections),
 
+    path('most_popular/', most_popular),
+
     path('upload_image/', upload_avatar),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

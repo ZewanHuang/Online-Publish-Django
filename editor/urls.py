@@ -18,8 +18,6 @@ urlpatterns = [
     path('count_remark/', count_remark),
     path('count/', count),
 
-    path('most_popular/', most_popular),
-
     path('get_authors/', get_authors),
     path('get_readers/', get_readers),
     path('get_reviews/', get_reviews),
