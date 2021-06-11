@@ -21,6 +21,7 @@ urlpatterns = [
     path('get_authors/', get_authors),
     path('get_readers/', get_readers),
     path('get_reviews/', get_reviews),
+    path('get_reviews_name/', get_reviews_name),
 
     path('get_articles_0/', get_articles_0),
     path('get_articles_1/', get_articles_1),

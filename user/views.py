@@ -387,7 +387,15 @@ def search_list(request):
 def search_exact(request):
     if request.method == 'POST':
         article_id = request.POST.get('article_id')
-        article = get_object_or_404(Article, article_id=int(article_id))
+        remark_id = request.POST.get('remark_id')
+
+        if article_id:
+            article = get_object_or_404(Article, article_id=int(article_id))
+        elif remark_id:
+            remark = get_object_or_404(ArticleRemark, id=int(remark_id))
+            article = remark.article
+        else:
+            return JsonResponse({'status_code': '4001'})
 
         info = {
             'title': article.title,

@@ -18,5 +18,5 @@ class EditorForm(forms.Form):
 
 class AllotReviewForm(forms.Form):
     article_id = forms.IntegerField(label="文章ID", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    username = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}),
+    reviews_name = forms.CharField(label="用户名", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}),
                                required=False)

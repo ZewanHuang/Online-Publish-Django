@@ -127,44 +127,46 @@ def editor_info(request):
 @csrf_exempt
 def allot_review(request):
     if request.method == 'POST':
-        allot_form = AllotReviewForm(request.POST)
+        article_id = request.POST.get('aid')
+        reviews_name = request.POST.get('reviews')
 
-        if allot_form.is_valid():
-            article_id = allot_form.cleaned_data.get('article_id')
-            review_name = allot_form.cleaned_data.get('username')
-
-            try:
-                article = Article.objects.get(article_id=article_id)
-                # 指定审稿人姓名
-                if review_name:
-                    try:
-                        review = Review.objects.get(review__username=review_name)
+        try:
+            article = Article.objects.get(article_id=article_id)
+            # 指定审稿人姓名
+            if reviews_name and reviews_name != '':
+                try:
+                    reviews = reviews_name.split(',')
+                    for review_name in reviews:
+                        review = Review.objects.get(review__real_name=review_name)
                         article_review = ArticleRemark()
                         article_review.article = article
                         article_review.review = review
                         article_review.save()
-                        return JsonResponse({'status_code': SUCCESS})
-                    except:
-                        return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
 
-                # 未指定审稿人-随机分配
-                else:
-                    review_obj = Review.objects.last()
-                    rand_id = random.sample(range(review_obj.id), 1)
-                    review = Review.objects.get(review_id=rand_id)
-                    try:
-                        article_review = ArticleRemark()
-                        article_review.article = article
-                        article_review.review = review
-                        article_review.save()
-                        return JsonResponse({'status_code': SUCCESS})
-                    except:
-                        return JsonResponse({'status_code': EditorStatus.ADD_REVIEW_ERROR})
+                    article.status = 1
+                    article.save()
 
-            except:
-                return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
-        return JsonResponse({'status_code': FORM_ERROR})
-    return JsonResponse({'status_code': DEFAULT})
+                    return JsonResponse({'status_code': SUCCESS})
+                except:
+                    return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
+
+            # 未指定审稿人-随机分配
+            else:
+                review_obj = Review.objects.last()
+                rand_id = random.sample(range(review_obj.id), 1)
+                review = Review.objects.get(review_id=rand_id)
+                try:
+                    article_review = ArticleRemark()
+                    article_review.article = article
+                    article_review.review = review
+                    article_review.save()
+                    return JsonResponse({'status_code': '2001'})
+                except:
+                    return JsonResponse({'status_code': EditorStatus.ADD_REVIEW_ERROR})
+
+        except:
+            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+    return JsonResponse({'status_code': '3000'})
 
 
 @csrf_exempt
@@ -430,6 +432,17 @@ def get_reviews(request):
                 'realName': user.real_name,
             }
             user_list.append(info)
+
+    return JsonResponse({'status_code': SUCCESS, 'reviews': json.dumps(user_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_reviews_name(request):
+    users = User.objects.filter(user_type='审稿人').order_by((F('c_time')).desc())
+    user_list = []
+    for user in users:
+        if bool(user.has_confirmed):
+            user_list.append({'name': user.real_name})
 
     return JsonResponse({'status_code': SUCCESS, 'reviews': json.dumps(user_list, ensure_ascii=False)})
 
