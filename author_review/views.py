@@ -382,3 +382,35 @@ def news(request):
 
         return JsonResponse({'status_code': MesStatus.NEWS_NOT_EXISTS})
     return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def add_read_times(request):
+    if request.method == 'POST':
+        aid = request.POST.get('aid')
+        try:
+            article = Article.objects.get(article_id=int(aid))
+            article.read_num += 1
+            article.save()
+        except:
+            return JsonResponse({'status_code': '4001'})
+
+        return JsonResponse({'status_code': '2000'})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def add_download_times(request):
+    if request.method == 'POST':
+        aid = request.POST.get('aid')
+        try:
+            article = Article.objects.get(article_id=int(aid))
+            article.download_num += 1
+            article.save()
+        except:
+            return JsonResponse({'status_code': '4001'})
+
+        return JsonResponse({'status_code': '2000'})
+
+    return JsonResponse({'status_code': DEFAULT})

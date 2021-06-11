@@ -21,5 +21,5 @@ urlpatterns = [
     path('', include(('user.urls', 'user'), namespace="user")),
     path('', include(('author_review.urls', 'author_review'), namespace="author_review")),
     path('message/', include(('message.urls', 'message'), namespace='message')),
-    path('', include(('editor.urls', 'editor'), namespace="editor")),
+    path('editor/', include(('editor.urls', 'editor'), namespace="editor")),
 ]

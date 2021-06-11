@@ -194,7 +194,7 @@ def get_session_user(request):
         'description': self_user.user_desc,
         'real_name': self_user.real_name,
         'education': self_user.education_exp,
-        'job': self_user.job_unit
+        'job': self_user.job_unit,
     }
 
     if self_user.avatar:
@@ -336,18 +336,18 @@ def userinfo_edit(request):
 def search_list(request):
     global articles
     if request.method == 'POST':
-        writer_name = request.POST.get('username')
+        writer_name = request.POST.get('realName')
         key = request.POST.get('key')
         category = request.POST.get('category')
         title = request.POST.get('title')
 
         if writer_name:
             try:
-                writer = Writer.objects.get(writer__username=writer_name)
+                writer = Writer.objects.get(writer__real_name=writer_name)
             except:
                 return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
             # articles = Article.objects.filter(Q(writers__writer=writer) & Q(status=4))
-            articles = Article.objects.filter(writers__writer__username=writer_name)
+            articles = Article.objects.filter(writer__real_name=writer_name)
         elif key:
             articles = Article.objects.filter(Q(Q(key__contains=key) | Q(title__contains=key)) & Q(status=4))
         elif category:
@@ -361,10 +361,18 @@ def search_list(request):
             json_list = []
             for article in list(articles):
                 if article.article_address:
-                    json_item = {"article_id": article.article_id, "title": article.title,
-                                 "abstract": article.abstract, "key": article.key,
-                                 "content": article.content, "category": article.category.category,
-                                 "writer": article.writers.all()[0].writer.username, "read_num": article.read_num,
+                    writers_name = []
+                    for writer in article.writers.all():
+                        writers_name.append(writer.writer.real_name)
+
+                    json_item = {"article_id": article.article_id,
+                                 "title": article.title,
+                                 "abstract": article.abstract,
+                                 "key": article.key,
+                                 "content": article.content,
+                                 "category": article.category.category,
+                                 "writer": ','.join(writers_name),
+                                 "read_num": article.read_num,
                                  "download_num": article.download_num}
 
                     json_list.append(json_item)

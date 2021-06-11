@@ -17,4 +17,7 @@ urlpatterns = [
     path('review_remark/', search_review_remark),
     path('upload_article/', upload_article),
     path('news/', news),
+
+    path('add_read_times/', add_read_times),
+    path('add_download_times/', add_download_times),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

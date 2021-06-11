@@ -12,7 +12,25 @@ urlpatterns = [
     path('allot/', allot_review),
     path('status/', update_status),
     path('delete/', delete_article),
+
     path('count_person/', count_person),
     path('count_article/', count_article),
-    path('most_popular/', most_popular)
+    path('count_remark/', count_remark),
+    path('count/', count),
+
+    path('most_popular/', most_popular),
+
+    path('get_authors/', get_authors),
+    path('get_readers/', get_readers),
+    path('get_reviews/', get_reviews),
+
+    path('get_articles_0/', get_articles_0),
+    path('get_articles_1/', get_articles_1),
+    path('get_articles_2/', get_articles_2),
+    path('get_articles_4/', get_articles_4),
+
+    path('get_remarks_all/', get_remarks_all),
+    path('get_remarks_undo/', get_remarks_undo),
+    path('get_remarks_done/', get_remarks_done),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,7 +1,6 @@
 import json
 import random
 import re
-
 from django.db.models import Q, F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -236,14 +235,154 @@ def count_article(request):
         if bool(article.article_address):
             article_count[article.status] += 1
 
+    # 0 审核中 1 已分配 2 待处理 3 审核不通过 4 已发布
     info = {
-        '审核中': article_count[0],
-        '已分配': article_count[1],
-        '待处理': article_count[2],
-        '审核不通过': article_count[3],
-        '已发布': article_count[4],
+        'testing': article_count[0],
+        'contribute': article_count[1],
+        'toDeal': article_count[2],
+        'fail': article_count[3],
+        'done': article_count[4],
     }
-    return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
+    return JsonResponse({'status_code': SUCCESS, 'article': json.dumps(info, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_articles_0(request):
+    articles = Article.objects.filter(status=0).order_by((F('create_time').desc()))
+    article_list = []
+    for article in articles:
+        if article.article_address:
+            writers_name = []
+            for writer in article.writers.all():
+                writers_name.append(writer.writer.real_name)
+
+            article_list.append({
+                'realName': ','.join(writers_name),
+                'type': article.category.category,
+                'title': article.title,
+                'key': article.key,
+                'abstract': article.abstract,
+                'aid': article.article_id,
+                'time': article.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+            })
+
+    return JsonResponse({'status_code': SUCCESS, 'info': json.dumps(article_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_articles_1(request):
+    articles = Article.objects.filter(status=1).order_by((F('create_time').desc()))
+    article_list = []
+    for article in articles:
+        if article.article_address:
+            writers_name = []
+            for writer in article.writers.all():
+                writers_name.append(writer.writer.real_name)
+
+            article_list.append({
+                'realName': ','.join(writers_name),
+                'type': article.category.category,
+                'title': article.title,
+                'key': article.key,
+                'abstract': article.abstract,
+                'aid': article.article_id,
+                'time': article.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+            })
+
+    return JsonResponse({'status_code': SUCCESS, 'info': json.dumps(article_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_articles_2(request):
+    articles = Article.objects.filter(status=2).order_by((F('create_time').desc()))
+    article_list = []
+    for article in articles:
+        if article.article_address:
+            writers_name = []
+            for writer in article.writers.all():
+                writers_name.append(writer.writer.real_name)
+
+            article_list.append({
+                'realName': ','.join(writers_name),
+                'type': article.category.category,
+                'title': article.title,
+                'key': article.key,
+                'abstract': article.abstract,
+                'aid': article.article_id,
+                'time': article.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+            })
+
+    return JsonResponse({'status_code': SUCCESS, 'info': json.dumps(article_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_articles_4(request):
+    articles = Article.objects.filter(status=4).order_by((F('create_time').desc()))
+    article_list = []
+    for article in articles:
+        if article.article_address:
+            writers_name = []
+            for writer in article.writers.all():
+                writers_name.append(writer.writer.real_name)
+
+            article_list.append({
+                'realName': ','.join(writers_name),
+                'type': article.category.category,
+                'title': article.title,
+                'key': article.key,
+                'abstract': article.abstract,
+                'aid': article.article_id,
+                'time': article.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+            })
+
+    return JsonResponse({'status_code': SUCCESS, 'info': json.dumps(article_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def count_remark(request):
+    remark_count = ArticleRemark.objects.count()
+    return JsonResponse({'status_code': SUCCESS, 'remarkCount': remark_count})
+
+
+@csrf_exempt
+def count(request):
+    readers = User.objects.filter(user_type='读者').count()
+    writers = User.objects.filter(user_type='作者').count()
+    reviews = User.objects.filter(user_type='审稿人').count()
+
+    user = {
+        'reader': readers,
+        'writer': writers,
+        'review': reviews,
+    }
+
+    article_count = [0 for x in range(0, 5)]
+    article_all = 0
+
+    articles = Article.objects.all()
+    for article in articles:
+        if bool(article.article_address):
+            article_count[article.status] += 1
+            article_all += 1
+
+    # 0 审核中 1 已分配 2 待处理 3 审核不通过 4 已发布
+    article = {
+        'testing': article_count[0],
+        'contribute': article_count[1],
+        'toDeal': article_count[2],
+        'fail': article_count[3],
+        'done': article_count[4],
+    }
+
+    remark_count = ArticleRemark.objects.count()
+
+    return JsonResponse({
+        'status_code': SUCCESS,
+        'user': json.dumps(user, ensure_ascii=False),
+        'article': json.dumps(article, ensure_ascii=False),
+        'remarkCount': remark_count,
+        'articleCount': article_all,
+    })
 
 
 @csrf_exempt
@@ -251,6 +390,9 @@ def most_popular(request):
     articles = Article.objects.all().order_by((F('read_num') + F('download_num')).desc())
     for article in articles:
         if bool(article.article_address):
+            writers_name = []
+            for writer in article.writers.all():
+                writers_name.append(writer.writer.real_name)
             info = {
                 "article_id": article.article_id,
                 "title": article.title,
@@ -259,10 +401,132 @@ def most_popular(request):
                 "content": article.content,
                 "status": article.status,
                 "category": article.category.category,
-                "writer": article.writers.all()[0].writer.username,
+                "writer": ','.join(writers_name),
                 "read_num": article.read_num,
                 "download_num": article.download_num,
                 "article_address": article.article_address.url
             }
             return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
     return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+
+@csrf_exempt
+def get_readers(request):
+    users = User.objects.filter(user_type='读者').order_by((F('c_time')).desc())
+    user_list = []
+    for user in users:
+        info = {
+            'username': user.username,
+            'email': user.email,
+            'time': str(user.c_time)
+        }
+        user_list.append(info)
+
+    return JsonResponse({'status_code': SUCCESS, 'readers': json.dumps(user_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_authors(request):
+    users = User.objects.filter(user_type='作者').order_by((F('c_time')).desc())
+    user_list = []
+    for user in users:
+        if bool(user.has_confirmed):
+            info = {
+                'username': user.username,
+                'email': user.email,
+                'realName': user.real_name,
+                'education': user.education_exp,
+                'job': user.job_unit,
+            }
+            user_list.append(info)
+
+    return JsonResponse({'status_code': SUCCESS, 'authors': json.dumps(user_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_reviews(request):
+    users = User.objects.filter(user_type='审稿人').order_by((F('c_time')).desc())
+    user_list = []
+    for user in users:
+        if bool(user.has_confirmed):
+            info = {
+                'username': user.username,
+                'email': user.email,
+                'realName': user.real_name,
+            }
+            user_list.append(info)
+
+    return JsonResponse({'status_code': SUCCESS, 'reviews': json.dumps(user_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_remarks_all(request):
+    remarks = ArticleRemark.objects.all()
+    remark_list = []
+    for remark in remarks:
+        article = remark.article
+        writers_name = []
+        for writer in article.writers.all():
+            writers_name.append(writer.writer.real_name)
+
+        info = {
+            'author': ','.join(writers_name),
+            'review': remark.review.review.real_name,
+            'content': remark.remark,
+            'aid': article.article_id,
+            'status': remark.status,
+            'rid': remark.id,
+            'time': remark.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        remark_list.append(info)
+
+    return JsonResponse({'status_code': SUCCESS, 'remarks': json.dumps(remark_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_remarks_undo(request):
+    remarks = ArticleRemark.objects.filter(status=0)
+    remark_list = []
+    for remark in remarks:
+        article = remark.article
+        writers_name = []
+        for writer in article.writers.all():
+            writers_name.append(writer.writer.real_name)
+
+        info = {
+            'author': ','.join(writers_name),
+            'review': remark.review.review.real_name,
+            'content': remark.remark,
+            'aid': article.article_id,
+            'status': remark.status,
+            'rid': remark.id,
+            'time': remark.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        remark_list.append(info)
+
+    return JsonResponse({'status_code': SUCCESS, 'remarks': json.dumps(remark_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def get_remarks_done(request):
+    remarks = ArticleRemark.objects.filter(status=1)
+    remark_list = []
+    for remark in remarks:
+        article = remark.article
+        writers_name = []
+        for writer in article.writers.all():
+            writers_name.append(writer.writer.real_name)
+
+        info = {
+            'author': ','.join(writers_name),
+            'review': remark.review.review.real_name,
+            'content': remark.remark,
+            'aid': article.article_id,
+            'status': remark.status,
+            'rid': remark.id,
+            'time': remark.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        remark_list.append(info)
+
+    return JsonResponse({'status_code': SUCCESS, 'remarks': json.dumps(remark_list, ensure_ascii=False)})
+
