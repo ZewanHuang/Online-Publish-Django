@@ -20,7 +20,7 @@ has_confirmed = 1
 user_type = '编辑'
 editor_id = 1
 id = 1
-avatar = '/media/user_default/2.png'
+avatar = 'avatar/user_default/2.png'
 c_time = datetime.datetime.now()
 
 '''插入数据'''
