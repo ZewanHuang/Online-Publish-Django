@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('apply/', apply_writer),
-    path('upload/', upload),
+    path('upload/', upload_article_info),
     path('author_review/', write_remark),
     path('writing/', writing_info),
     path('review/', review_info),

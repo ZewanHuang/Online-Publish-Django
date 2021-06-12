@@ -7,11 +7,10 @@ from editor.views import *
 
 urlpatterns = [
     path('register_editor/', register_editor),
-    path('add_review/', add_review),
+
     path('editor/', editor_info),
     path('allot/', allot_review),
     path('status/', update_status),
-    path('delete/', delete_article),
 
     path('count_person/', count_person),
     path('count_article/', count_article),
@@ -32,4 +31,10 @@ urlpatterns = [
     path('get_remarks_undo/', get_remarks_undo),
     path('get_remarks_done/', get_remarks_done),
 
+    path('add_review/', add_review),
+    path('add_writer/', add_writer),
+    path('add_reader/', add_reader),
+
+    path('del_user/', del_user),
+    path('delete/', delete_article),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

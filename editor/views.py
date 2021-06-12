@@ -60,7 +60,7 @@ def add_review(request):
             email = review_form.cleaned_data.get('email')
             real_name = review_form.cleaned_data.get('real_name')
 
-            same_name_review = Review.objects.filter(review__username=username)
+            same_name_review = User.objects.filter(username=username)
             if same_name_review:
                 return JsonResponse({'status_code': RegisterStatus.USERNAME_REPEATED})
 
@@ -78,6 +78,7 @@ def add_review(request):
             new_user.password = hash_code(password)
             new_user.email = email
             new_user.real_name = real_name
+            new_user.has_confirmed = 1
             new_user.user_type = '审稿人'
             new_user.save()
 
@@ -85,18 +86,108 @@ def add_review(request):
             new_review.review = new_user
             new_review.save()
 
-            code = make_confirm_string(new_user)
-            try:
-                send_email_confirm(email, code)
-            except:
-                new_user.delete()
-                return JsonResponse({'status_code': RegisterStatus.SEND_EMAIL_ERROR})
+            return JsonResponse({'status_code': SUCCESS})
+
+        else:
+            return JsonResponse({'status_code': FORM_ERROR})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def add_writer(request):
+    if request.method == 'POST':
+        writer_form = WriterForm(request.POST)
+        if writer_form.is_valid():
+            username = writer_form.cleaned_data.get('username')
+            password = writer_form.cleaned_data.get('password')
+            email = writer_form.cleaned_data.get('email')
+            real_name = writer_form.cleaned_data.get('real_name')
+
+            same_name_review = User.objects.filter(username=username)
+            if same_name_review:
+                return JsonResponse({'status_code': RegisterStatus.USERNAME_REPEATED})
+
+            same_email_user = User.objects.filter(email=email)
+            if same_email_user:
+                return JsonResponse({'status_code': RegisterStatus.EMAIL_ERROR})
+
+            # 检测密码不符合规范：8-18，英文字母+数字
+            if not re.match('^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,18}$', password):
+                return JsonResponse({'status_code': RegisterStatus.PASSWORD_INVALID})
+
+            # 成功
+            new_user = User()
+            new_user.username = username
+            new_user.password = hash_code(password)
+            new_user.email = email
+            new_user.real_name = real_name
+            new_user.has_confirmed = 1
+            new_user.user_type = '作者'
+            new_user.save()
+
+            new_writer = Writer()
+            new_writer.writer = new_user
+            new_writer.save()
 
             return JsonResponse({'status_code': SUCCESS})
 
         else:
             return JsonResponse({'status_code': FORM_ERROR})
 
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def add_reader(request):
+    if request.method == 'POST':
+        reader_form = ReaderForm(request.POST)
+        if reader_form.is_valid():
+            username = reader_form.cleaned_data.get('username')
+            password = reader_form.cleaned_data.get('password')
+            email = reader_form.cleaned_data.get('email')
+
+            same_name_reader = User.objects.filter(username=username)
+            if same_name_reader:
+                return JsonResponse({'status_code': RegisterStatus.USERNAME_REPEATED})
+
+            same_email_user = User.objects.filter(email=email)
+            if same_email_user:
+                return JsonResponse({'status_code': RegisterStatus.EMAIL_ERROR})
+
+            # 检测密码不符合规范：8-18，英文字母+数字
+            if not re.match('^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,18}$', password):
+                return JsonResponse({'status_code': RegisterStatus.PASSWORD_INVALID})
+
+            # 成功
+            new_user = User()
+            new_user.username = username
+            new_user.password = hash_code(password)
+            new_user.email = email
+            new_user.has_confirmed = 1
+            new_user.user_type = '读者'
+            new_user.save()
+
+            return JsonResponse({'status_code': SUCCESS})
+
+        else:
+            return JsonResponse({'status_code': FORM_ERROR})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def del_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        user = User.objects.get(username=username)
+        if user:
+            try:
+                user.delete()
+                return JsonResponse({'status_code': '2000'})
+            except:
+                return JsonResponse({'status_code': '4002'})
+        return JsonResponse({'status_code': '4001'})
     return JsonResponse({'status_code': DEFAULT})
 
 
@@ -395,7 +486,7 @@ def get_readers(request):
         info = {
             'username': user.username,
             'email': user.email,
-            'time': str(user.c_time)
+            'time': user.c_time.strftime("%Y-%m-%d %H:%M:%S"),
         }
         user_list.append(info)
 

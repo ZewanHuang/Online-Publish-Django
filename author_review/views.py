@@ -46,7 +46,7 @@ def apply_writer(request):
 
 
 @csrf_exempt
-def upload(request):
+def upload_article_info(request):
     if request.method == 'POST':
 
         article_form = ArticleForm(request.POST)
@@ -66,7 +66,6 @@ def upload(request):
                 new_article.abstract = abstract
                 new_article.key = key
                 new_article.content = content
-                # new_article.article_address = article_address
 
                 same_category = Category.objects.get(category=str_category)
                 new_article.category = same_category
