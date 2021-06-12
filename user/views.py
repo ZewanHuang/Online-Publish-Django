@@ -456,7 +456,7 @@ def statistic(request):
     articles = Article.objects.count()
 
     return JsonResponse({
-        'readers': readers,
+        'readers': readers + writers,
         'writers': writers,
         'reviews': reviews,
         'articles': articles
