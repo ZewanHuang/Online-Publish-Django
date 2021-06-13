@@ -6,12 +6,16 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('apply/', apply_writer),
-    path('upload/', upload),
-    path('author_review/', write_remark),
+
+    path('upload/', upload_article_info),
+    path('upload_article/', upload_article),
+    path('confirm_article/', confirm_article),
+
+    path('get_article/', search_article),
+
     path('writing/', writing_info),
     path('review/', review_info),
     path('popular/', popular_article),
-    path('get_article/', search_article),
 
     path('get_remark/', search_remark_list),
     path('self_remarks_undo/', self_remarks_undo),
@@ -19,7 +23,8 @@ urlpatterns = [
 
     path('article_remark/', search_article_remark),
     path('review_remark/', search_review_remark),
-    path('upload_article/', upload_article),
+    path('author_review/', write_remark),
+
     path('news/', news),
 
     path('add_read_times/', add_read_times),

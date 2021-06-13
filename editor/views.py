@@ -60,7 +60,7 @@ def add_review(request):
             email = review_form.cleaned_data.get('email')
             real_name = review_form.cleaned_data.get('real_name')
 
-            same_name_review = Review.objects.filter(review__username=username)
+            same_name_review = User.objects.filter(username=username)
             if same_name_review:
                 return JsonResponse({'status_code': RegisterStatus.USERNAME_REPEATED})
 
@@ -78,6 +78,7 @@ def add_review(request):
             new_user.password = hash_code(password)
             new_user.email = email
             new_user.real_name = real_name
+            new_user.has_confirmed = 1
             new_user.user_type = '审稿人'
             new_user.save()
 
@@ -85,18 +86,108 @@ def add_review(request):
             new_review.review = new_user
             new_review.save()
 
-            code = make_confirm_string(new_user)
-            try:
-                send_email_confirm(email, code)
-            except:
-                new_user.delete()
-                return JsonResponse({'status_code': RegisterStatus.SEND_EMAIL_ERROR})
+            return JsonResponse({'status_code': SUCCESS})
+
+        else:
+            return JsonResponse({'status_code': FORM_ERROR})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def add_writer(request):
+    if request.method == 'POST':
+        writer_form = WriterForm(request.POST)
+        if writer_form.is_valid():
+            username = writer_form.cleaned_data.get('username')
+            password = writer_form.cleaned_data.get('password')
+            email = writer_form.cleaned_data.get('email')
+            real_name = writer_form.cleaned_data.get('real_name')
+
+            same_name_review = User.objects.filter(username=username)
+            if same_name_review:
+                return JsonResponse({'status_code': RegisterStatus.USERNAME_REPEATED})
+
+            same_email_user = User.objects.filter(email=email)
+            if same_email_user:
+                return JsonResponse({'status_code': RegisterStatus.EMAIL_ERROR})
+
+            # 检测密码不符合规范：8-18，英文字母+数字
+            if not re.match('^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,18}$', password):
+                return JsonResponse({'status_code': RegisterStatus.PASSWORD_INVALID})
+
+            # 成功
+            new_user = User()
+            new_user.username = username
+            new_user.password = hash_code(password)
+            new_user.email = email
+            new_user.real_name = real_name
+            new_user.has_confirmed = 1
+            new_user.user_type = '作者'
+            new_user.save()
+
+            new_writer = Writer()
+            new_writer.writer = new_user
+            new_writer.save()
 
             return JsonResponse({'status_code': SUCCESS})
 
         else:
             return JsonResponse({'status_code': FORM_ERROR})
 
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def add_reader(request):
+    if request.method == 'POST':
+        reader_form = ReaderForm(request.POST)
+        if reader_form.is_valid():
+            username = reader_form.cleaned_data.get('username')
+            password = reader_form.cleaned_data.get('password')
+            email = reader_form.cleaned_data.get('email')
+
+            same_name_reader = User.objects.filter(username=username)
+            if same_name_reader:
+                return JsonResponse({'status_code': RegisterStatus.USERNAME_REPEATED})
+
+            same_email_user = User.objects.filter(email=email)
+            if same_email_user:
+                return JsonResponse({'status_code': RegisterStatus.EMAIL_ERROR})
+
+            # 检测密码不符合规范：8-18，英文字母+数字
+            if not re.match('^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,18}$', password):
+                return JsonResponse({'status_code': RegisterStatus.PASSWORD_INVALID})
+
+            # 成功
+            new_user = User()
+            new_user.username = username
+            new_user.password = hash_code(password)
+            new_user.email = email
+            new_user.has_confirmed = 1
+            new_user.user_type = '读者'
+            new_user.save()
+
+            return JsonResponse({'status_code': SUCCESS})
+
+        else:
+            return JsonResponse({'status_code': FORM_ERROR})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def del_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        user = User.objects.get(username=username)
+        if user:
+            try:
+                user.delete()
+                return JsonResponse({'status_code': '2000'})
+            except:
+                return JsonResponse({'status_code': '4002'})
+        return JsonResponse({'status_code': '4001'})
     return JsonResponse({'status_code': DEFAULT})
 
 
@@ -172,25 +263,28 @@ def allot_review(request):
 @csrf_exempt
 def update_status(request):
     if request.method == 'POST':
-        article_id = request.POST.get('article_id')
+        article_id = request.POST.get('aid')
         str_status = request.POST.get('status')
         try:
             article = Article.objects.get(article_id=article_id)
-            if "审核通过" == str_status:
-                article.status = 1
-            elif "审核不通过" == str_status:
-                article.status = 2
-            elif "已发布" == str_status:
-                article.status = 4
-                new_message = ArticleNews()
-                new_message.article = article
-                new_message.user = User.objects.get(username=request.session.get('username'))
-                new_message.status = 3
-                new_message.save()
-            article.save()
-            return JsonResponse({'status_code': SUCCESS})
         except:
             return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+        article.status = int(str_status)
+
+        # if "审核通过" == str_status:
+        #     article.status = 1
+        # elif "审核不通过" == str_status:
+        #     article.status = 2
+        # elif str_status == 4:
+        #     article.status = 4
+            # new_message = ArticleNews()
+            # new_message.article = article
+            # new_message.user = User.objects.get(username=request.session.get('username'))
+            # new_message.status = 3
+            # new_message.save()
+        article.save()
+        return JsonResponse({'status_code': SUCCESS})
 
     return JsonResponse({'status_code': DEFAULT})
 
@@ -281,6 +375,12 @@ def get_articles_1(request):
             for writer in article.writers.all():
                 writers_name.append(writer.writer.real_name)
 
+            reviews = Review.objects.filter(articleremark__article=article)
+            reviews_name = []
+            if reviews:
+                for review in reviews:
+                    reviews_name.append(review.review.real_name)
+
             article_list.append({
                 'realName': ','.join(writers_name),
                 'type': article.category.category,
@@ -289,6 +389,7 @@ def get_articles_1(request):
                 'abstract': article.abstract,
                 'aid': article.article_id,
                 'time': article.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+                'reviews': ','.join(reviews_name),
             })
 
     return JsonResponse({'status_code': SUCCESS, 'info': json.dumps(article_list, ensure_ascii=False)})
@@ -304,6 +405,12 @@ def get_articles_2(request):
             for writer in article.writers.all():
                 writers_name.append(writer.writer.real_name)
 
+            reviews = Review.objects.filter(articleremark__article=article)
+            reviews_name = []
+            if reviews:
+                for review in reviews:
+                    reviews_name.append(review.review.real_name)
+
             article_list.append({
                 'realName': ','.join(writers_name),
                 'type': article.category.category,
@@ -312,6 +419,7 @@ def get_articles_2(request):
                 'abstract': article.abstract,
                 'aid': article.article_id,
                 'time': article.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+                'reviews': ','.join(reviews_name),
             })
 
     return JsonResponse({'status_code': SUCCESS, 'info': json.dumps(article_list, ensure_ascii=False)})
@@ -327,6 +435,12 @@ def get_articles_4(request):
             for writer in article.writers.all():
                 writers_name.append(writer.writer.real_name)
 
+            reviews = Review.objects.filter(articleremark__article=article)
+            reviews_name = []
+            if reviews:
+                for review in reviews:
+                    reviews_name.append(review.review.real_name)
+
             article_list.append({
                 'realName': ','.join(writers_name),
                 'type': article.category.category,
@@ -335,6 +449,7 @@ def get_articles_4(request):
                 'abstract': article.abstract,
                 'aid': article.article_id,
                 'time': article.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+                'reviews': ','.join(reviews_name),
             })
 
     return JsonResponse({'status_code': SUCCESS, 'info': json.dumps(article_list, ensure_ascii=False)})
@@ -395,7 +510,7 @@ def get_readers(request):
         info = {
             'username': user.username,
             'email': user.email,
-            'time': str(user.c_time)
+            'time': user.c_time.strftime("%Y-%m-%d %H:%M:%S"),
         }
         user_list.append(info)
 
@@ -442,7 +557,10 @@ def get_reviews_name(request):
     user_list = []
     for user in users:
         if bool(user.has_confirmed):
-            user_list.append({'name': user.real_name})
+            user_list.append({
+                'name': user.real_name,
+                'email': user.email,
+            })
 
     return JsonResponse({'status_code': SUCCESS, 'reviews': json.dumps(user_list, ensure_ascii=False)})
 
@@ -482,13 +600,15 @@ def get_remarks_undo(request):
             writers_name.append(writer.writer.real_name)
 
         info = {
-            'author': ','.join(writers_name),
+            'writer': ','.join(writers_name),
             'review': remark.review.review.real_name,
             'content': remark.remark,
             'aid': article.article_id,
+            'title': article.title,
             'status': remark.status,
             'rid': remark.id,
             'time': remark.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+            'email': remark.review.review.email,
         }
         remark_list.append(info)
 
@@ -506,15 +626,123 @@ def get_remarks_done(request):
             writers_name.append(writer.writer.real_name)
 
         info = {
-            'author': ','.join(writers_name),
+            'writer': ','.join(writers_name),
             'review': remark.review.review.real_name,
             'content': remark.remark,
             'aid': article.article_id,
+            'title': article.title,
             'status': remark.status,
             'rid': remark.id,
             'time': remark.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+            'email': remark.review.review.email,
         }
         remark_list.append(info)
 
     return JsonResponse({'status_code': SUCCESS, 'remarks': json.dumps(remark_list, ensure_ascii=False)})
 
+
+@csrf_exempt
+def get_category(request):
+    categories = Category.objects.all()
+    category_list = []
+    for category in categories:
+        info = {
+            'category': category.category,
+            'description': category.description,
+            'id': category.id
+        }
+        category_list.append(info)
+
+    return JsonResponse({'status_code': SUCCESS, 'info': json.dumps(category_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def add_category(request):
+    if request.method == 'POST':
+        category = request.POST.get('category')
+        description = request.POST.get('description')
+
+        if len(str(category)) > 10:
+            return JsonResponse({'status_code': '4002'})
+
+        if len(str(description)) > 20:
+            return JsonResponse({'status_code': '4003'})
+
+        old_category = Category.objects.filter(category=category)
+        if old_category:
+            return JsonResponse({'status_code': '4001'})
+
+        new_category = Category()
+        new_category.category = category
+        new_category.description = description
+        new_category.save()
+
+        return JsonResponse({'status_code': '2000'})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def del_category(request):
+    if request.method == 'POST':
+        category_id = request.POST.get('id')
+        category = Category.objects.get(id=category_id)
+        if category:
+            category.delete()
+            return JsonResponse({'status_code': SUCCESS})
+        return JsonResponse({'status_code': '4001'})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def get_article_detail(request):
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
+        article = get_object_or_404(Article, article_id=int(article_id))
+
+        writers_name = []
+        for writer in article.writers.all():
+            writers_name.append(writer.writer.real_name)
+
+        info = {
+            'title': article.title,
+            'abstract': article.abstract,
+            'key': article.key,
+            'content': article.content,
+            'category': article.category.category,
+            'writer': ','.join(writers_name),
+            'read_num': article.read_num,
+            'download_num': article.download_num,
+            'article_address': article.article_address.url,
+            'email': article.writers.all()[0].writer.email,
+        }
+
+        remarks = ArticleRemark.objects.filter(article_id=article_id, status=1)
+        remark_list = []
+        for remark in remarks:
+            article = remark.article
+            writers_name = []
+            for writer in article.writers.all():
+                writers_name.append(writer.writer.real_name)
+
+            remark_info = {
+                'reviewer': remark.review.review.real_name,
+                'content': remark.remark,
+                'time': remark.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+                'email': remark.review.review.email,
+            }
+            if remark.review.review.avatar:
+                remark_info['avatar'] = remark.review.review.avatar
+            else:
+                remark_info['avatar'] = WEB_ROOT + '/media/avatar/user_default/2.png'
+
+            remark_list.append(remark_info)
+
+        return JsonResponse({
+            'status_code': SUCCESS,
+            'article': json.dumps(info, ensure_ascii=False),
+            'remarks': json.dumps(remark_list, ensure_ascii=False)
+        })
+
+    return JsonResponse({'status_code': DEFAULT})

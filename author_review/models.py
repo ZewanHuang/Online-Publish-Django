@@ -30,6 +30,7 @@ class Review(models.Model):
 
 class Category(models.Model):
     category = models.CharField(max_length=20)
+    description = models.CharField(max_length=50, blank=True)
 
     class Meta:
         db_table = 'tb_categories'
