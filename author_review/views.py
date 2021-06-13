@@ -455,8 +455,9 @@ def search_article_remark(request):
                              "review": this_remark.review.review.username,
                              'reviewer': this_remark.review.review.real_name,
                              'email': this_remark.review.review.email,
-                             'portrait': avatar,
+                             'avatar': avatar,
                              "time": this_remark.create_time.strftime("%Y-%m-%d")}
+
                 json_list.append(json_item)
 
             return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
