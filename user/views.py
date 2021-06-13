@@ -397,16 +397,21 @@ def search_exact(request):
         else:
             return JsonResponse({'status_code': '4001'})
 
+        writers_name = []
+        for writer in article.writers.all():
+            writers_name.append(writer.writer.real_name)
+
         info = {
             'title': article.title,
             'abstract': article.abstract,
             'key': article.key,
             'content': article.content,
             'category': article.category.category,
-            'writer': article.writers.all()[0].writer.real_name,
+            'writer': ','.join(writers_name),
             'read_num': article.read_num,
             'download_num': article.download_num,
-            'article_address': article.article_address.url
+            'article_address': article.article_address.url,
+            'email': article.writers.all()[0].writer.email,
         }
         return JsonResponse({'status_code': SUCCESS, 'article': json.dumps(info, ensure_ascii=False)})
 

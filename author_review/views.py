@@ -84,6 +84,7 @@ def upload_article_info(request):
 
                 new_message = ArticleNews()
                 new_message.article = new_article
+                print(request.session.get('username'))
                 new_message.user = User.objects.get(username=request.session.get('username'))
                 new_message.status = 2
                 new_message.save()
@@ -120,6 +121,21 @@ def upload_article(request):
 
 
 @csrf_exempt
+def confirm_article(request):
+    if request.method == 'POST':
+        this_article_id = request.POST.get('articleID')
+        try:
+            this_article = Article.objects.get(article_id=this_article_id)
+        except:
+            return JsonResponse({'status_code': '4001'})
+
+        if this_article.article_address:
+            return JsonResponse({'status_code': SUCCESS})
+        return JsonResponse({'status_code': '4002'})
+    return JsonResponse({'status_code': '4003'})
+
+
+@csrf_exempt
 def write_remark(request):
     if request.method == 'POST':
 
@@ -133,24 +149,27 @@ def write_remark(request):
         try:
             review = Review.objects.get(review__username=reviewer_name)
             article = Article.objects.get(article_id=article_id)
-            try:
+
+            self_username = request.session.get('username')
+
+            if self_username == review.review.username:
                 same_remark = ArticleRemark.objects.get(review=review, article=article)
-                if same_remark.status == 0:
-                    same_remark.remark = new_remark
-                    same_remark.status = 1
-                    same_remark.save()
+                # if same_remark.status == 0:
+                same_remark.remark = new_remark
+                same_remark.status = 1
+                same_remark.save()
 
-                    article.status = 2
-                    article.save()
+                article.status = 2
+                article.save()
 
-                    new_message = ArticleNews()
-                    new_message.article = article
-                    new_message.user = review
-                    new_message.status = 4
-                    new_message.save()
-                else:
-                    return JsonResponse({'status_code': RemarkStatus.REMARK_EXIST})
-            except:
+                    # new_message = ArticleNews()
+                    # new_message.article = article
+                    # new_message.user = review
+                    # new_message.status = 4
+                    # new_message.save()
+                # else:
+                #     return JsonResponse({'status_code': RemarkStatus.REMARK_EXIST})
+            else:
                 return JsonResponse({'status_code': RemarkStatus.REVIEW_NOT_MATCH})
         except:
             return JsonResponse({'status_code': RemarkStatus.AR_NOT_EXIST})
@@ -202,7 +221,7 @@ def review_info(request):
                 if that_user.avatar:
                     info['avatar'] = WEB_ROOT + that_user.avatar.url
                 else:
-                    info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '1.png'
+                    info['avatar'] = WEB_ROOT + '/media/avatar/user_default/' + '2.png'
                 return JsonResponse({'status_code': SUCCESS, 'user': json.dumps(info, ensure_ascii=False)})
 
             else:
@@ -264,8 +283,10 @@ def self_remarks_undo(request):
         }
         remark_list.append(info)
 
-    return JsonResponse({'status_code': SUCCESS, 'remarks': json.dumps(remark_list, ensure_ascii=False)})
-
+    if remark_list:
+        return JsonResponse({'status_code': SUCCESS, 'remarks': json.dumps(remark_list, ensure_ascii=False)})
+    else:
+        return JsonResponse({'status_code': '4002'})
 
 @csrf_exempt
 def self_remarks_done(request):
@@ -322,11 +343,16 @@ def search_article(request):
             json_list = []
             for article in articles:
                 if article.article_address:
-                    json_item = {"article_id": article.article_id, "title": article.title,
-                                 "abstract": article.abstract, "key": article.key,
-                                 "content": article.content, "category": article.category.category,
-                                 "writer": article.writers.all()[0].writer.username, "read_num": article.read_num,
-                                 "download_num": article.download_num, "article_address": article.article_address.url}
+                    json_item = {"article_id": article.article_id,
+                                 "title": article.title,
+                                 "abstract": article.abstract,
+                                 "key": article.key,
+                                 "content": article.content,
+                                 "category": article.category.category,
+                                 "writer": article.writers.all()[0].writer.username,
+                                 "read_num": article.read_num,
+                                 "download_num": article.download_num,
+                                 "article_address": article.article_address.url}
 
                     json_list.append(json_item)
 
@@ -345,10 +371,23 @@ def search_remark_list(request):
         key = request.POST.get('key')
         category = request.POST.get('category')
         title = request.POST.get('title')
+        aid = request.POST.get('aid')
 
         search_remark_list = ArticleRemark.objects.filter(Q(article__writers__writer_id=writer.id) & Q(status=1))
         json_list = []
-        if key:
+        if aid:
+            for search_remark in list(search_remark_list):
+                if aid == search_remark.article.article_id:
+                    json_item = {"article_id": search_remark.article.article_id,
+                                 "title": search_remark.article.title,
+                                 "content": search_remark.remark,
+                                 "review": search_remark.review.username,
+                                 'reviewer': search_remark.review.real_name,
+                                 'avatar': search_remark.review.review.avatar,
+                                 'email': search_remark.review.review.email,
+                                 "time": search_remark.create_time}
+                    json_list.append(json_item)
+        elif key:
             for search_remark in list(search_remark_list):
                 if key in search_remark.article.key:
                     json_item = {"article_id": search_remark.article.article_id,
@@ -356,7 +395,7 @@ def search_remark_list(request):
                                  "content": search_remark.remark,
                                  "review": search_remark.review.username,
                                  'reviewer': search_remark.review.real_name,
-                                 "update_time": search_remark.create_time}
+                                 "time": search_remark.create_time}
                     json_list.append(json_item)
         elif category:
             for search_remark in list(search_remark_list):
@@ -366,7 +405,7 @@ def search_remark_list(request):
                                  "content": search_remark.remark,
                                  "review": search_remark.review.username,
                                  'reviewer': search_remark.review.real_name,
-                                 "update_time": search_remark.create_time}
+                                 "time": search_remark.create_time}
                     json_list.append(json_item)
         elif title:
             for search_remark in list(search_remark_list):
@@ -376,7 +415,7 @@ def search_remark_list(request):
                                  "content": search_remark.remark,
                                  "review": search_remark.review.username,
                                  'reviewer': search_remark.review.real_name,
-                                 "update_time": search_remark.create_time}
+                                 "time": search_remark.create_time}
                     json_list.append(json_item)
         else:
             for search_remark in list(search_remark_list):
@@ -385,11 +424,13 @@ def search_remark_list(request):
                              "content": search_remark.remark,
                              "review": search_remark.review.username,
                              'reviewer': search_remark.review.real_name,
-                             "update_time": search_remark.create_time}
+                             "time": search_remark.create_time}
                 json_list.append(json_item)
 
-        return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
-
+        if json_list:
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+        else:
+            return JsonResponse({'status_code': '4001'})
     return JsonResponse({'status_code': DEFAULT})
 
 
@@ -400,7 +441,7 @@ def search_article_remark(request):
         remark = get_object_or_404(ArticleRemark, id=int(rid))
         article_id = remark.article.article_id
 
-        remarks = ArticleRemark.objects.filter(article__article_id__exact=article_id)
+        remarks = ArticleRemark.objects.filter(article__article_id__exact=article_id, status=1)
 
         if remarks:
             json_list = []
