@@ -37,4 +37,9 @@ urlpatterns = [
 
     path('del_user/', del_user),
     path('delete/', delete_article),
+
+    path('get_category/', get_category),
+    path('add_category/', add_category),
+    path('del_category/', del_category),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

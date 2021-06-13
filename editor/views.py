@@ -609,3 +609,56 @@ def get_remarks_done(request):
 
     return JsonResponse({'status_code': SUCCESS, 'remarks': json.dumps(remark_list, ensure_ascii=False)})
 
+
+@csrf_exempt
+def get_category(request):
+    categories = Category.objects.all()
+    category_list = []
+    for category in categories:
+        info = {
+            'category': category.category,
+            'description': category.description,
+            'id': category.id
+        }
+        category_list.append(info)
+
+    return JsonResponse({'status_code': SUCCESS, 'info': json.dumps(category_list, ensure_ascii=False)})
+
+
+@csrf_exempt
+def add_category(request):
+    if request.method == 'POST':
+        category = request.POST.get('category')
+        description = request.POST.get('description')
+
+        if len(str(category)) > 10:
+            return JsonResponse({'status_code': '4002'})
+
+        if len(str(description)) > 20:
+            return JsonResponse({'status_code': '4003'})
+
+        old_category = Category.objects.filter(category=category)
+        if old_category:
+            return JsonResponse({'status_code': '4001'})
+
+        new_category = Category()
+        new_category.category = category
+        new_category.description = description
+        new_category.save()
+
+        return JsonResponse({'status_code': '2000'})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def del_category(request):
+    if request.method == 'POST':
+        category_id = request.POST.get('id')
+        category = Category.objects.get(id=category_id)
+        if category:
+            category.delete()
+            return JsonResponse({'status_code': SUCCESS})
+        return JsonResponse({'status_code': '4001'})
+
+    return JsonResponse({'status_code': DEFAULT})
