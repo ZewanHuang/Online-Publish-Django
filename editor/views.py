@@ -654,7 +654,7 @@ def get_category(request):
         info = {
             'category': category.category,
             'description': category.description,
-            'id': category.id
+            'id': category.category_id
         }
         category_list.append(info)
 
@@ -680,6 +680,7 @@ def add_category(request):
         new_category = Category()
         new_category.category = category
         new_category.description = description
+        new_category.category_id = Category.objects.count()+1
         new_category.save()
 
         return JsonResponse({'status_code': '2000'})
@@ -691,9 +692,16 @@ def add_category(request):
 def del_category(request):
     if request.method == 'POST':
         category_id = request.POST.get('id')
-        category = Category.objects.get(id=category_id)
+        category = Category.objects.get(category_id=category_id)
         if category:
             category.delete()
+
+            idx = 1
+            for cg in Category.objects.all():
+                cg.category_id = idx
+                idx += 1
+                cg.save()
+
             return JsonResponse({'status_code': SUCCESS})
         return JsonResponse({'status_code': '4001'})
 

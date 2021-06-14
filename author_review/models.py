@@ -29,6 +29,7 @@ class Review(models.Model):
 
 
 class Category(models.Model):
+    category_id = models.IntegerField()
     category = models.CharField(max_length=20)
     description = models.CharField(max_length=50, blank=True)
 
