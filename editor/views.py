@@ -507,10 +507,15 @@ def get_readers(request):
     users = User.objects.filter(user_type='读者').order_by((F('c_time')).desc())
     user_list = []
     for user in users:
+        if user.has_confirmed:
+            hasConfirmed = '是'
+        else:
+            hasConfirmed = '否'
         info = {
             'username': user.username,
             'email': user.email,
             'time': user.c_time.strftime("%Y-%m-%d %H:%M:%S"),
+            'hasConfirmed': hasConfirmed,
         }
         user_list.append(info)
 
