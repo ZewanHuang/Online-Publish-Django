@@ -345,7 +345,7 @@ def search_list(request):
         if user_name:
             try:
                 writer = Writer.objects.get(writer__username=user_name)
-                articles = Article.objects.filter(writers__writer__username=user_name & Q(status=4))
+                articles = Article.objects.filter(writers__writer__username=user_name, status=4)
             except:
                 return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
         elif writer_name:
@@ -363,7 +363,7 @@ def search_list(request):
             articles = Article.objects.filter(Q(title__contains=title) | Q(status=4))
         else:
             articles = Article.objects.filter(status=4)
-
+        print(articles)
         if articles:
             json_list = []
             for article in list(articles):
