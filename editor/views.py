@@ -12,6 +12,7 @@ from author_review.models import *
 from django3.settings import WEB_ROOT
 from editor.form import *
 from editor.models import *
+from message.models import Message
 from user.models import User
 from utils.hash import hash_code
 from utils.response_code import *
@@ -284,6 +285,18 @@ def update_status(request):
             # new_message.status = 3
             # new_message.save()
         article.save()
+
+        if article.status == 4:
+            # send message
+            users = User.objects.filter(writer__article__article_id=article.article_id)
+            for user in users:
+                message = Message()
+                message.message_type = '未读'
+                message.title = '文章发表'
+                message.content = '感谢投稿本平台，您的文章《' + article.title + '》审核成功，已上传至在线平台，您可以在本平台进行查看。有任何问题请及时邮件联系编辑！'
+                message.user = user
+                message.save()
+
         return JsonResponse({'status_code': SUCCESS})
 
     return JsonResponse({'status_code': DEFAULT})
@@ -295,12 +308,25 @@ def delete_article(request):
         article_id = request.POST.get('article_id')
         try:
             article = Article.objects.get(article_id=article_id)
+
+            # send message
+            users = User.objects.filter(writer__article=article)
+            for user in users:
+                message = Message()
+                message.message_type = '未读'
+                message.title = '删除提醒'
+                message.content = '您的文章《' + article.title + '》违背规定，已被编辑删除。如有异议，请及时联系编辑！'
+                message.user = user
+                message.save()
+
+            # new_message = ArticleNews()
+            # new_message.article = article
+            # new_message.user = User.objects.get(username=request.session.get('username'))
+            # new_message.status = 5
+            # new_message.save()
+
             article.delete()
-            new_message = ArticleNews()
-            new_message.article = article
-            new_message.user = User.objects.get(username=request.session.get('username'))
-            new_message.status = 5
-            new_message.save()
+
             return JsonResponse({'status_code': SUCCESS})
         except:
             return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})

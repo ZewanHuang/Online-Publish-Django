@@ -6,6 +6,7 @@ import json
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
+from message.models import Message
 from .form import *
 from .models import *
 from django3.settings import WEB_ROOT
@@ -37,6 +38,15 @@ def apply_writer(request):
                 writer = Writer()
                 writer.writer = user
                 writer.save()
+
+                # message
+                message = Message()
+                message.message_type = '未读'
+                message.title = '作者申请'
+                message.user = user
+                message.content = '欢迎注册本平台的作者，期待您的投稿！'
+                message.save()
+
         else:
             return JsonResponse({'status_code': WriterStatus.MESSAGE_NOT_EXIST})
 
@@ -130,6 +140,17 @@ def confirm_article(request):
             return JsonResponse({'status_code': '4001'})
 
         if this_article.article_address:
+
+            # send message
+            users = User.objects.filter(writer__article__article_id=this_article_id)
+            for user in users:
+                message = Message()
+                message.message_type = '未读'
+                message.title = '上传文章'
+                message.content = '感谢投稿本平台，您的文章《' + this_article.title + '》已上传成功，请耐心等待审核'
+                message.user = user
+                message.save()
+
             return JsonResponse({'status_code': SUCCESS})
         return JsonResponse({'status_code': '4002'})
     return JsonResponse({'status_code': '4003'})
