@@ -15,5 +15,6 @@ urlpatterns = [
 将 django3/settings.py 中修改为
 
 ```python
-WEB_ROOT = 'https://zewan.top/api'
+DEBUG = False
+WEB_ROOT = 'httpS://zewan.top/api'
 ```

@@ -32,4 +32,4 @@ urlpatterns = [
 
     path('self_popular/', self_popular),
     path('self_latest/', self_latest),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

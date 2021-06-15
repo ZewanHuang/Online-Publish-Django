@@ -4,8 +4,14 @@ from message.views import *
 
 
 urlpatterns = [
-    path('finish/', finish_message),
-    path('done/', done_mes),
-    path('unread/', unread_mes),
-    path('save/', save_mes),
+    path('finish/', finish),
+    path('save/', save),
+    path('delete/', delete),
+    path('unfinish/', unfinish),
+
+    path('getDone/', getDoneMes),
+    path('getUnread/', getUnread),
+    path('getSave/', getSave),
+
+    path('getAll/', getAll),
 ]

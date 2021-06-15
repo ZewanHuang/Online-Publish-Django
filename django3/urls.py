@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.conf.urls.static import static
+from django.conf import settings
+
 # urlpatterns = [
 #     path('admin/', admin.site.urls),
 #     path('', include(('user.urls', 'user'), namespace="user")),
@@ -28,4 +31,4 @@ urlpatterns = [
     path('api/', include(('author_review.urls', 'author_review'), namespace="author_review")),
     path('api/message/', include(('message.urls', 'message'), namespace='message')),
     path('api/editor/', include(('editor.urls', 'editor'), namespace="editor")),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

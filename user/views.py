@@ -336,27 +336,35 @@ def userinfo_edit(request):
 def search_list(request):
     global articles
     if request.method == 'POST':
+        user_name = request.POST.get('username')
         writer_name = request.POST.get('realName')
         key = request.POST.get('key')
         category = request.POST.get('category')
         title = request.POST.get('title')
 
-        if writer_name:
+        if user_name:
+            try:
+                writer = Writer.objects.get(writer__username=user_name)
+                articles = Article.objects.filter(writers__writer__username=user_name, status=4)
+            except:
+                return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
+        elif writer_name:
             try:
                 writer = Writer.objects.get(writer__real_name=writer_name)
             except:
                 return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
-            # articles = Article.objects.filter(Q(writers__writer=writer) & Q(status=4))
-            articles = Article.objects.filter(writer__real_name=writer_name)
+            articles = Article.objects.filter(Q(writers__writer=writer.writer) & Q(status=4))
+            # articles = Article.objects.filter(writers__writer__real_name=writer_name, status=4)
         elif key:
             articles = Article.objects.filter(Q(Q(key__contains=key) | Q(title__contains=key)) & Q(status=4))
         elif category:
             articles = Article.objects.filter(Q(category__category=category) & Q(status=4))
         elif title:
-            articles = Article.objects.filter(Q(title__contains=title) | Q(status=4))
+            # articles = Article.objects.filter(Q(title__contains=title) | Q(status=4))
+            articles = Article.objects.filter(title__contains=title, status=4)
         else:
             articles = Article.objects.filter(status=4)
-
+        print(articles)
         if articles:
             json_list = []
             for article in list(articles):
@@ -376,7 +384,6 @@ def search_list(request):
                                  "download_num": article.download_num}
 
                     json_list.append(json_item)
-
             return JsonResponse({'status_code': SUCCESS, 'articles': json.dumps(json_list)})
         else:
             return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
@@ -458,11 +465,16 @@ def statistic(request):
     readers = User.objects.filter(user_type='读者').count()
     writers = User.objects.filter(user_type='作者').count()
     reviews = User.objects.filter(user_type='审稿人').count()
-    articles = Article.objects.count()
+
+    article_count = 0
+    articles = Article.objects.all()
+    for article in articles:
+        if bool(article.article_address):
+            article_count += 1
 
     return JsonResponse({
         'readers': readers + writers,
         'writers': writers,
         'reviews': reviews,
-        'articles': articles
+        'articles': article_count
     })
