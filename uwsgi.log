@@ -43,3 +43,255 @@ spawned uWSGI worker 5 (pid: 13078, cores: 4)
 spawned uWSGI worker 6 (pid: 13079, cores: 4)
 spawned uWSGI worker 7 (pid: 13080, cores: 4)
 spawned uWSGI worker 8 (pid: 13081, cores: 4)
+[pid: 13078|app: 0|req: 1/1] 106.39.42.152 () {62 vars in 1092 bytes} [Tue Jun 15 08:54:25 2021] GET /api/most_popular/ => generated 1702 bytes in 134 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 0)
+[pid: 13077|app: 0|req: 1/2] 106.39.42.152 () {62 vars in 1102 bytes} [Tue Jun 15 08:54:25 2021] GET /api/message/getUnread/ => generated 56 bytes in 147 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 0)
+[pid: 13077|app: 0|req: 2/3] 106.39.42.152 () {62 vars in 1102 bytes} [Tue Jun 15 08:54:26 2021] GET /api/message/getUnread/ => generated 56 bytes in 10 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 13077|app: 0|req: 3/4] 106.39.42.152 () {62 vars in 1092 bytes} [Tue Jun 15 08:54:26 2021] GET /api/most_popular/ => generated 1702 bytes in 11 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 3)
+[pid: 13077|app: 0|req: 4/5] 106.39.42.152 () {62 vars in 1102 bytes} [Tue Jun 15 08:54:27 2021] GET /api/message/getUnread/ => generated 56 bytes in 12 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 2)
+[pid: 13078|app: 0|req: 2/6] 106.39.42.152 () {62 vars in 1092 bytes} [Tue Jun 15 08:54:27 2021] GET /api/most_popular/ => generated 1702 bytes in 14 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 1)
+[pid: 13078|app: 0|req: 3/7] 106.39.42.152 () {62 vars in 1102 bytes} [Tue Jun 15 08:54:28 2021] GET /api/message/getUnread/ => generated 56 bytes in 12 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 2)
+[pid: 13078|app: 0|req: 4/8] 106.39.42.152 () {62 vars in 1092 bytes} [Tue Jun 15 08:54:28 2021] GET /api/most_popular/ => generated 1702 bytes in 9 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 3)
+[pid: 13077|app: 0|req: 5/9] 106.39.42.152 () {62 vars in 1102 bytes} [Tue Jun 15 08:55:14 2021] GET /api/message/getUnread/ => generated 56 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 0)
+[pid: 13077|app: 0|req: 6/10] 106.39.42.152 () {62 vars in 1102 bytes} [Tue Jun 15 08:55:43 2021] GET /api/message/getUnread/ => generated 56 bytes in 9 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 13077|app: 0|req: 7/11] 103.232.212.36 () {54 vars in 973 bytes} [Tue Jun 15 08:59:30 2021] GET /api/message/getUnread/ => generated 56 bytes in 9 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 3)
+[pid: 13077|app: 0|req: 8/12] 103.232.212.36 () {54 vars in 963 bytes} [Tue Jun 15 08:59:30 2021] GET /api/most_popular/ => generated 1702 bytes in 9 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 2)
+[pid: 13077|app: 0|req: 9/13] 106.39.42.70 () {44 vars in 784 bytes} [Tue Jun 15 09:00:54 2021] GET /api/message/getUnread/ => generated 23 bytes in 5 msecs (HTTP/1.1 200) 7 headers in 270 bytes (1 switches on core 0)
+[pid: 13077|app: 0|req: 10/14] 106.39.42.70 () {44 vars in 774 bytes} [Tue Jun 15 09:00:54 2021] GET /api/most_popular/ => generated 1702 bytes in 17 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 1)
+[pid: 13077|app: 0|req: 11/15] 106.39.42.70 () {48 vars in 941 bytes} [Tue Jun 15 09:00:57 2021] POST /api/userinfo/ => generated 260 bytes in 54 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 3)
+[pid: 13081|app: 0|req: 1/16] 106.39.42.70 () {48 vars in 946 bytes} [Tue Jun 15 09:00:57 2021] POST /api/collections/ => generated 23 bytes in 56 msecs (HTTP/1.1 200) 5 headers in 157 bytes (1 switches on core 0)
+Not Found: /api/media/avatar/user_default/2.png
+[pid: 13077|app: 0|req: 12/17] 106.39.42.70 () {54 vars in 986 bytes} [Tue Jun 15 09:00:57 2021] GET /api/media/avatar/user_default/2.png => generated 8101 bytes in 9 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 2)
+[pid: 13077|app: 0|req: 13/18] 106.39.42.70 () {44 vars in 800 bytes} [Tue Jun 15 09:01:00 2021] GET /api/logout/ => generated 23 bytes in 0 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 2)
+[pid: 13077|app: 0|req: 14/19] 106.39.42.70 () {44 vars in 800 bytes} [Tue Jun 15 09:01:06 2021] GET /api/logout/ => generated 23 bytes in 0 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 2)
+[pid: 13077|app: 0|req: 15/20] 106.39.42.70 () {42 vars in 741 bytes} [Tue Jun 15 09:01:26 2021] GET /api/message/getUnread/ => generated 23 bytes in 0 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 2)
+[pid: 13077|app: 0|req: 16/21] 106.39.42.70 () {48 vars in 941 bytes} [Tue Jun 15 09:01:26 2021] POST /api/userinfo/ => generated 260 bytes in 7 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 2)
+[pid: 13078|app: 0|req: 5/22] 106.39.42.70 () {48 vars in 947 bytes} [Tue Jun 15 09:01:26 2021] POST /api/collections/ => generated 23 bytes in 6 msecs (HTTP/1.1 200) 5 headers in 157 bytes (1 switches on core 0)
+Not Found: /api/media/avatar/user_default/2.png
+[pid: 13080|app: 0|req: 1/23] 106.39.42.70 () {54 vars in 987 bytes} [Tue Jun 15 09:01:27 2021] GET /api/media/avatar/user_default/2.png => generated 8101 bytes in 51 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 0)
+[pid: 13077|app: 0|req: 17/24] 106.39.42.70 () {42 vars in 726 bytes} [Tue Jun 15 09:01:30 2021] GET /api/message/getUnread/ => generated 23 bytes in 1 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 13075|app: 0|req: 1/25] 106.39.42.70 () {42 vars in 717 bytes} [Tue Jun 15 09:01:31 2021] GET /api/most_popular/ => generated 1702 bytes in 55 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 0)
+[pid: 13077|app: 0|req: 18/26] 106.39.42.70 () {44 vars in 785 bytes} [Tue Jun 15 09:01:33 2021] GET /api/logout/ => generated 23 bytes in 0 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 13078|app: 0|req: 6/27] 106.39.42.70 () {42 vars in 726 bytes} [Tue Jun 15 09:01:37 2021] GET /api/message/getUnread/ => generated 23 bytes in 0 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 13077|app: 0|req: 19/28] 106.39.42.70 () {42 vars in 717 bytes} [Tue Jun 15 09:01:37 2021] GET /api/most_popular/ => generated 1702 bytes in 9 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 1)
+[pid: 13077|app: 0|req: 20/29] 106.39.42.70 () {44 vars in 785 bytes} [Tue Jun 15 09:02:06 2021] GET /api/logout/ => generated 23 bytes in 0 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 2)
+[pid: 13077|app: 0|req: 21/30] 103.232.212.36 () {56 vars in 1032 bytes} [Tue Jun 15 09:02:30 2021] GET /api/logout/ => generated 23 bytes in 10 msecs (HTTP/1.1 200) 7 headers in 270 bytes (1 switches on core 2)
+[pid: 13078|app: 0|req: 7/31] 103.232.212.36 () {52 vars in 896 bytes} [Tue Jun 15 09:02:34 2021] GET /api/statistic/ => generated 58 bytes in 8 msecs (HTTP/1.1 200) 5 headers in 157 bytes (1 switches on core 1)
+[pid: 13078|app: 0|req: 8/32] 103.232.212.36 () {58 vars in 1112 bytes} [Tue Jun 15 09:03:05 2021] POST /api/login/ => generated 52 bytes in 15 msecs (HTTP/1.1 200) 7 headers in 316 bytes (1 switches on core 3)
+[pid: 13081|app: 0|req: 2/33] 103.232.212.36 () {58 vars in 1112 bytes} [Tue Jun 15 09:03:12 2021] POST /api/login/ => generated 52 bytes in 13 msecs (HTTP/1.1 200) 7 headers in 316 bytes (1 switches on core 1)
+[pid: 13081|app: 0|req: 3/34] 103.232.212.36 () {54 vars in 973 bytes} [Tue Jun 15 09:03:28 2021] GET /api/message/getUnread/ => generated 56 bytes in 12 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 2)
+[pid: 13081|app: 0|req: 4/35] 103.232.212.36 () {54 vars in 963 bytes} [Tue Jun 15 09:03:28 2021] GET /api/most_popular/ => generated 1702 bytes in 12 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 3)
+[pid: 13080|app: 0|req: 2/36] 103.232.212.36 () {60 vars in 1200 bytes} [Tue Jun 15 09:03:37 2021] POST /api/collections/ => generated 23 bytes in 13 msecs (HTTP/1.1 200) 5 headers in 157 bytes (1 switches on core 1)
+[pid: 13081|app: 0|req: 5/37] 103.232.212.36 () {60 vars in 1194 bytes} [Tue Jun 15 09:03:37 2021] POST /api/userinfo/ => generated 191 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 0)
+Not Found: /api/media/avatar/user_default/2.png
+[pid: 13081|app: 0|req: 6/38] 103.232.212.36 () {56 vars in 1115 bytes} [Tue Jun 15 09:03:39 2021] GET /api/media/avatar/user_default/2.png => generated 8101 bytes in 10 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 1)
+<QuerySet [<Article: 6>]>
+[pid: 13080|app: 0|req: 3/39] 103.232.212.36 () {60 vars in 1191 bytes} [Tue Jun 15 09:03:45 2021] POST /api/userinfo/ => generated 191 bytes in 13 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 3)
+[pid: 13081|app: 0|req: 7/40] 103.232.212.36 () {60 vars in 1197 bytes} [Tue Jun 15 09:03:45 2021] POST /api/search_list/ => generated 1737 bytes in 17 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 2)
+[pid: 13081|app: 0|req: 8/41] 103.232.212.36 () {60 vars in 1200 bytes} [Tue Jun 15 09:03:48 2021] POST /api/collections/ => generated 23 bytes in 6 msecs (HTTP/1.1 200) 5 headers in 157 bytes (1 switches on core 3)
+<QuerySet [<Article: 6>]>
+[pid: 13075|app: 0|req: 2/42] 103.232.212.36 () {60 vars in 1191 bytes} [Tue Jun 15 09:03:49 2021] POST /api/userinfo/ => generated 191 bytes in 12 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 1)
+[pid: 13080|app: 0|req: 4/43] 103.232.212.36 () {60 vars in 1197 bytes} [Tue Jun 15 09:03:49 2021] POST /api/search_list/ => generated 1737 bytes in 20 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 2)
+[pid: 13075|app: 0|req: 3/44] 103.232.212.36 () {60 vars in 1200 bytes} [Tue Jun 15 09:03:50 2021] POST /api/collections/ => generated 23 bytes in 7 msecs (HTTP/1.1 200) 5 headers in 157 bytes (1 switches on core 3)
+Not Found: /api/media/avatar/user_default/2.png
+[pid: 13075|app: 0|req: 4/45] 103.232.212.36 () {54 vars in 1060 bytes} [Tue Jun 15 09:04:37 2021] GET /api/media/avatar/user_default/2.png => generated 8101 bytes in 11 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 2)
+[pid: 13077|app: 0|req: 22/46] 103.232.212.36 () {54 vars in 961 bytes} [Tue Jun 15 09:04:37 2021] GET /api/get_session/ => generated 329 bytes in 6 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 0)
+Not Found: /api/media/avatar/user_default/2.png
+[pid: 13077|app: 0|req: 23/47] 103.232.212.36 () {54 vars in 1033 bytes} [Tue Jun 15 09:04:37 2021] GET /api/media/avatar/user_default/2.png => generated 8101 bytes in 6 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 1)
+[pid: 13077|app: 0|req: 24/48] 103.232.212.36 () {60 vars in 1156 bytes} [Tue Jun 15 09:04:46 2021] POST /api/upload_image/ => generated 23 bytes in 13 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 13077|app: 0|req: 26/49] 103.232.212.36 () {60 vars in 1184 bytes} [Tue Jun 15 09:04:53 2021] POST /api/writing/ => generated 173 bytes in 9 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 0)
+[pid: 13077|app: 0|req: 26/50] 103.232.212.36 () {54 vars in 975 bytes} [Tue Jun 15 09:04:53 2021] GET /api/self_popular/ => generated 1702 bytes in 15 msecs (HTTP/1.1 200) 6 headers in 173 bytes (1 switches on core 2)
+Not Found: /api/media/avatar/user_12/avatar-zewan.jpg
+[pid: 13077|app: 0|req: 27/51] 103.232.212.36 () {54 vars in 1057 bytes} [Tue Jun 15 09:04:53 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 8119 bytes in 6 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 3)
+[pid: 13077|app: 0|req: 28/52] 103.232.212.36 () {54 vars in 985 bytes} [Tue Jun 15 09:04:59 2021] GET /api/message/getUnread/ => generated 56 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 3)
+[pid: 13077|app: 0|req: 29/53] 103.232.212.36 () {54 vars in 985 bytes} [Tue Jun 15 09:05:00 2021] GET /api/message/getUnread/ => generated 56 bytes in 9 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 0)
+[pid: 13077|app: 0|req: 30/54] 103.232.212.36 () {60 vars in 1184 bytes} [Tue Jun 15 09:05:01 2021] POST /api/writing/ => generated 173 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 2)
+[pid: 13077|app: 0|req: 31/55] 103.232.212.36 () {54 vars in 975 bytes} [Tue Jun 15 09:05:01 2021] GET /api/self_popular/ => generated 1702 bytes in 12 msecs (HTTP/1.1 200) 6 headers in 173 bytes (1 switches on core 1)
+Not Found: /api/media/avatar/user_12/avatar-zewan.jpg
+[pid: 13077|app: 0|req: 32/56] 103.232.212.36 () {54 vars in 1057 bytes} [Tue Jun 15 09:05:02 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 8119 bytes in 6 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 3)
+[pid: 13077|app: 0|req: 33/57] 103.232.212.36 () {54 vars in 985 bytes} [Tue Jun 15 09:05:06 2021] GET /api/message/getUnread/ => generated 56 bytes in 8 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 0)
+[pid: 13077|app: 0|req: 34/58] 103.232.212.36 () {60 vars in 1184 bytes} [Tue Jun 15 09:05:06 2021] POST /api/writing/ => generated 173 bytes in 55 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 2)
+[pid: 13074|app: 0|req: 1/59] 103.232.212.36 () {54 vars in 975 bytes} [Tue Jun 15 09:05:06 2021] GET /api/self_popular/ => generated 1702 bytes in 66 msecs (HTTP/1.1 200) 6 headers in 173 bytes (1 switches on core 0)
+Not Found: /api/media/avatar/user_12/avatar-zewan.jpg
+[pid: 13077|app: 0|req: 35/60] 103.232.212.36 () {54 vars in 1057 bytes} [Tue Jun 15 09:05:06 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 8119 bytes in 6 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 1)
+[pid: 13077|app: 0|req: 36/61] 103.232.212.36 () {54 vars in 985 bytes} [Tue Jun 15 09:05:08 2021] GET /api/message/getUnread/ => generated 56 bytes in 23 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 13074|app: 0|req: 2/62] 103.232.212.36 () {60 vars in 1184 bytes} [Tue Jun 15 09:05:08 2021] POST /api/writing/ => generated 173 bytes in 66 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 3)
+[pid: 13076|app: 0|req: 1/63] 103.232.212.36 () {54 vars in 975 bytes} [Tue Jun 15 09:05:08 2021] GET /api/self_popular/ => generated 1702 bytes in 75 msecs (HTTP/1.1 200) 6 headers in 173 bytes (1 switches on core 0)
+Not Found: /api/media/avatar/user_12/avatar-zewan.jpg
+[pid: 13074|app: 0|req: 3/64] 103.232.212.36 () {54 vars in 1057 bytes} [Tue Jun 15 09:05:09 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 8119 bytes in 10 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 2)
+[pid: 13076|app: 0|req: 2/65] 103.232.212.36 () {60 vars in 1200 bytes} [Tue Jun 15 09:05:13 2021] POST /api/collections/ => generated 23 bytes in 9 msecs (HTTP/1.1 200) 5 headers in 157 bytes (1 switches on core 1)
+[pid: 13074|app: 0|req: 4/66] 103.232.212.36 () {60 vars in 1194 bytes} [Tue Jun 15 09:05:13 2021] POST /api/userinfo/ => generated 197 bytes in 13 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 1)
+Not Found: /api/media/avatar/user_12/avatar-zewan.jpg
+[pid: 13076|app: 0|req: 3/67] 103.232.212.36 () {54 vars in 1072 bytes} [Tue Jun 15 09:05:13 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 8119 bytes in 10 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 2)
+Not Found: /api/media/avatar/user_12/avatar-zewan.jpg
+[pid: 13076|app: 0|req: 4/68] 103.232.212.36 () {56 vars in 1135 bytes} [Tue Jun 15 09:06:19 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 8119 bytes in 6 msecs (HTTP/1.1 404) 5 headers in 159 bytes (1 switches on core 2)
+[pid: 13076|app: 0|req: 5/69] 103.232.212.36 () {54 vars in 1006 bytes} [Tue Jun 15 09:07:59 2021] GET /api/message/getUnread/ => generated 56 bytes in 10 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 2)
+*** Starting uWSGI 2.0.19.1 (64bit) on [Tue Jun 15 17:09:11 2021] ***
+compiled with version: 4.8.5 20150623 (Red Hat 4.8.5-44) on 29 April 2021 16:29:02
+os: Linux-3.10.0-1160.11.1.el7.x86_64 #1 SMP Fri Dec 18 16:34:56 UTC 2020
+nodename: VM-12-7-centos
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 1
+current working directory: /root/Ops/django
+detected binary path: /usr/local/python3/bin/uwsgi
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/Ops/django
+your processes number limit is 7260
+your memory page size is 4096 bytes
+detected max file descriptor number: 100002
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8080 fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.4 (default, Apr 29 2021, 23:46:58)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]
+PEP 405 virtualenv detected: /root/.virtualenvs/django
+Set PythonHome to /root/.virtualenvs/django
+Python main interpreter initialized at 0x2423780
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 3150396 bytes (3076 KB) for 32 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x2423780 pid: 17127 (default app)
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 17127)
+spawned uWSGI worker 1 (pid: 17130, cores: 4)
+spawned uWSGI worker 2 (pid: 17131, cores: 4)
+spawned uWSGI worker 3 (pid: 17132, cores: 4)
+spawned uWSGI worker 4 (pid: 17133, cores: 4)
+spawned uWSGI worker 5 (pid: 17134, cores: 4)
+spawned uWSGI worker 6 (pid: 17135, cores: 4)
+spawned uWSGI worker 7 (pid: 17136, cores: 4)
+spawned uWSGI worker 8 (pid: 17137, cores: 4)
+[pid: 17133|app: 0|req: 1/1] 103.232.212.36 () {56 vars in 1135 bytes} [Tue Jun 15 09:09:44 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 179 bytes in 48 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 0)
+[pid: 17133|app: 0|req: 2/2] 103.232.212.36 () {54 vars in 963 bytes} [Tue Jun 15 09:09:45 2021] GET /api/most_popular/ => generated 1702 bytes in 62 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 1)
+[pid: 17130|app: 0|req: 1/3] 103.232.212.36 () {54 vars in 973 bytes} [Tue Jun 15 09:09:45 2021] GET /api/message/getUnread/ => generated 56 bytes in 62 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 0)
+[pid: 17133|app: 0|req: 3/4] 103.232.212.36 () {60 vars in 1194 bytes} [Tue Jun 15 09:09:50 2021] POST /api/userinfo/ => generated 197 bytes in 53 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 2)
+[pid: 17135|app: 0|req: 1/5] 103.232.212.36 () {60 vars in 1200 bytes} [Tue Jun 15 09:09:50 2021] POST /api/collections/ => generated 23 bytes in 53 msecs (HTTP/1.1 200) 5 headers in 157 bytes (1 switches on core 0)
+[pid: 17133|app: 0|req: 4/6] 103.232.212.36 () {54 vars in 1072 bytes} [Tue Jun 15 09:09:51 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 3)
+[pid: 17133|app: 0|req: 5/7] 106.39.42.70 () {42 vars in 727 bytes} [Tue Jun 15 09:12:33 2021] GET /api/message/getUnread/ => generated 23 bytes in 1 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 3)
+[pid: 17131|app: 0|req: 1/8] 106.39.42.70 () {42 vars in 716 bytes} [Tue Jun 15 09:12:33 2021] GET /api/most_popular/ => generated 1702 bytes in 55 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 0)
+*** Starting uWSGI 2.0.19.1 (64bit) on [Tue Jun 15 17:14:10 2021] ***
+compiled with version: 4.8.5 20150623 (Red Hat 4.8.5-44) on 29 April 2021 16:29:02
+os: Linux-3.10.0-1160.11.1.el7.x86_64 #1 SMP Fri Dec 18 16:34:56 UTC 2020
+nodename: VM-12-7-centos
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 1
+current working directory: /root/Ops/django
+detected binary path: /usr/local/python3/bin/uwsgi
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/Ops/django
+your processes number limit is 7260
+your memory page size is 4096 bytes
+detected max file descriptor number: 100002
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8080 fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.4 (default, Apr 29 2021, 23:46:58)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]
+PEP 405 virtualenv detected: /root/.virtualenvs/django
+Set PythonHome to /root/.virtualenvs/django
+Python main interpreter initialized at 0x129d780
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 3150396 bytes (3076 KB) for 32 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x129d780 pid: 18273 (default app)
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 18273)
+spawned uWSGI worker 1 (pid: 18281, cores: 4)
+spawned uWSGI worker 2 (pid: 18285, cores: 4)
+spawned uWSGI worker 3 (pid: 18286, cores: 4)
+spawned uWSGI worker 4 (pid: 18287, cores: 4)
+spawned uWSGI worker 5 (pid: 18288, cores: 4)
+spawned uWSGI worker 6 (pid: 18289, cores: 4)
+spawned uWSGI worker 7 (pid: 18290, cores: 4)
+spawned uWSGI worker 8 (pid: 18291, cores: 4)
+[pid: 18285|app: 0|req: 1/1] 103.232.212.36 () {58 vars in 1166 bytes} [Tue Jun 15 09:14:34 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 179 bytes in 52 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 0)
+[pid: 18285|app: 0|req: 2/2] 103.232.212.36 () {58 vars in 1166 bytes} [Tue Jun 15 09:14:40 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 1)
+[pid: 18285|app: 0|req: 3/3] 103.232.212.36 () {54 vars in 993 bytes} [Tue Jun 15 09:14:44 2021] GET /api/message/getUnread/ => generated 56 bytes in 14 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 18285|app: 0|req: 4/4] 103.232.212.36 () {60 vars in 1194 bytes} [Tue Jun 15 09:14:45 2021] POST /api/userinfo/ => generated 197 bytes in 52 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 3)
+[pid: 18281|app: 0|req: 1/5] 103.232.212.36 () {60 vars in 1200 bytes} [Tue Jun 15 09:14:45 2021] POST /api/collections/ => generated 23 bytes in 53 msecs (HTTP/1.1 200) 5 headers in 157 bytes (1 switches on core 0)
+[pid: 18285|app: 0|req: 5/6] 103.232.212.36 () {54 vars in 1072 bytes} [Tue Jun 15 09:14:46 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 0)
+[pid: 18285|app: 0|req: 6/7] 103.232.212.36 () {58 vars in 1166 bytes} [Tue Jun 15 09:17:05 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 0)
+[pid: 18285|app: 0|req: 7/8] 103.232.212.36 () {58 vars in 1166 bytes} [Tue Jun 15 09:17:06 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 0)
+[pid: 18285|app: 0|req: 8/9] 103.232.212.36 () {56 vars in 1071 bytes} [Tue Jun 15 09:17:38 2021] GET /api/admin => generated 0 bytes in 0 msecs (HTTP/1.1 301) 5 headers in 179 bytes (1 switches on core 0)
+[pid: 18285|app: 0|req: 9/10] 103.232.212.36 () {58 vars in 1166 bytes} [Tue Jun 15 09:17:54 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 0)
+[pid: 18285|app: 0|req: 10/11] 103.232.212.36 () {54 vars in 973 bytes} [Tue Jun 15 09:18:53 2021] GET /api/message/getUnread/ => generated 56 bytes in 54 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 0)
+[pid: 18291|app: 0|req: 1/12] 103.232.212.36 () {54 vars in 963 bytes} [Tue Jun 15 09:18:53 2021] GET /api/most_popular/ => generated 1702 bytes in 59 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 0)
+[pid: 18285|app: 0|req: 11/13] 103.232.212.36 () {54 vars in 975 bytes} [Tue Jun 15 09:18:57 2021] GET /api/self_popular/ => generated 1702 bytes in 60 msecs (HTTP/1.1 200) 6 headers in 173 bytes (1 switches on core 3)
+[pid: 18288|app: 0|req: 1/14] 103.232.212.36 () {60 vars in 1184 bytes} [Tue Jun 15 09:18:57 2021] POST /api/writing/ => generated 173 bytes in 63 msecs (HTTP/1.1 200) 6 headers in 172 bytes (1 switches on core 0)
+[pid: 18285|app: 0|req: 12/15] 103.232.212.36 () {54 vars in 1057 bytes} [Tue Jun 15 09:18:58 2021] GET /api/media/avatar/user_12/avatar-zewan.jpg => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 2)
+[pid: 18285|app: 0|req: 13/16] 103.232.212.36 () {58 vars in 1030 bytes} [Tue Jun 15 09:21:09 2021] POST /api/get_article/ => generated 1904 bytes in 11 msecs (HTTP/1.1 200) 6 headers in 173 bytes (1 switches on core 2)
+[pid: 18288|app: 0|req: 2/17] 103.232.212.36 () {54 vars in 990 bytes} [Tue Jun 15 09:21:14 2021] GET /api/message/getUnread/ => generated 56 bytes in 11 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 18288|app: 0|req: 3/18] 103.232.212.36 () {60 vars in 1199 bytes} [Tue Jun 15 09:21:14 2021] POST /api/search_exact/ => generated 1706 bytes in 14 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 3)
+[pid: 18288|app: 0|req: 4/19] 103.232.212.36 () {60 vars in 1390 bytes} [Tue Jun 15 09:21:16 2021] GET /api/media/article/article_6/%E5%8E%86%E5%8F%B2%E4%BA%8B%E5%AE%9E%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BF%86%E4%B8%8E%E5%8E%86%E5%8F%B2%E5%BF%83%E6%80%A7.pdf => generated 179 bytes in 7 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 2)
+[pid: 18288|app: 0|req: 5/20] 103.232.212.36 () {58 vars in 1335 bytes} [Tue Jun 15 09:25:44 2021] GET /api/media/article/article_6/%E5%8E%86%E5%8F%B2%E4%BA%8B%E5%AE%9E%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BF%86%E4%B8%8E%E5%8E%86%E5%8F%B2%E5%BF%83%E6%80%A7.pdf => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 2)
+[pid: 18288|app: 0|req: 6/21] 103.232.212.36 () {60 vars in 1366 bytes} [Tue Jun 15 09:30:48 2021] GET /api/media/article/article_6/%E5%8E%86%E5%8F%B2%E4%BA%8B%E5%AE%9E%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BF%86%E4%B8%8E%E5%8E%86%E5%8F%B2%E5%BF%83%E6%80%A7.pdf => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 2)
+[pid: 18288|app: 0|req: 7/22] 103.232.212.36 () {60 vars in 1366 bytes} [Tue Jun 15 09:30:49 2021] GET /api/media/article/article_6/%E5%8E%86%E5%8F%B2%E4%BA%8B%E5%AE%9E%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BF%86%E4%B8%8E%E5%8E%86%E5%8F%B2%E5%BF%83%E6%80%A7.pdf => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 2)
+[pid: 18291|app: 0|req: 2/23] 103.232.212.36 () {60 vars in 1366 bytes} [Tue Jun 15 09:30:51 2021] GET /api/media/article/article_6/%E5%8E%86%E5%8F%B2%E4%BA%8B%E5%AE%9E%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BF%86%E4%B8%8E%E5%8E%86%E5%8F%B2%E5%BF%83%E6%80%A7.pdf => generated 179 bytes in 9 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 1)
+[pid: 18291|app: 0|req: 3/24] 103.232.212.36 () {60 vars in 1366 bytes} [Tue Jun 15 09:30:52 2021] GET /api/media/article/article_6/%E5%8E%86%E5%8F%B2%E4%BA%8B%E5%AE%9E%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BF%86%E4%B8%8E%E5%8E%86%E5%8F%B2%E5%BF%83%E6%80%A7.pdf => generated 179 bytes in 1 msecs (HTTP/1.1 404) 5 headers in 158 bytes (1 switches on core 1)
+*** Starting uWSGI 2.0.19.1 (64bit) on [Tue Jun 15 17:31:27 2021] ***
+compiled with version: 4.8.5 20150623 (Red Hat 4.8.5-44) on 29 April 2021 16:29:02
+os: Linux-3.10.0-1160.11.1.el7.x86_64 #1 SMP Fri Dec 18 16:34:56 UTC 2020
+nodename: VM-12-7-centos
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 1
+current working directory: /root/Ops/django
+detected binary path: /usr/local/python3/bin/uwsgi
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/Ops/django
+your processes number limit is 7260
+your memory page size is 4096 bytes
+detected max file descriptor number: 100002
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8080 fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.4 (default, Apr 29 2021, 23:46:58)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]
+PEP 405 virtualenv detected: /root/.virtualenvs/django
+Set PythonHome to /root/.virtualenvs/django
+Python main interpreter initialized at 0x16e5780
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 3150396 bytes (3076 KB) for 32 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x16e5780 pid: 21910 (default app)
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 21910)
+spawned uWSGI worker 1 (pid: 21913, cores: 4)
+spawned uWSGI worker 2 (pid: 21914, cores: 4)
+spawned uWSGI worker 3 (pid: 21915, cores: 4)
+spawned uWSGI worker 4 (pid: 21916, cores: 4)
+spawned uWSGI worker 5 (pid: 21917, cores: 4)
+spawned uWSGI worker 6 (pid: 21918, cores: 4)
+spawned uWSGI worker 7 (pid: 21919, cores: 4)
+spawned uWSGI worker 8 (pid: 21920, cores: 4)
+[pid: 21916|app: 0|req: 1/1] 103.232.212.36 () {58 vars in 1304 bytes} [Tue Jun 15 09:31:32 2021] GET /api/media/article/article_6/%E5%8E%86%E5%8F%B2%E4%BA%8B%E5%AE%9E%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BF%86%E4%B8%8E%E5%8E%86%E5%8F%B2%E5%BF%83%E6%80%A7.pdf => generated 382732 bytes in 20 msecs via sendfile() (HTTP/1.1 200) 7 headers in 375 bytes (0 switches on core 0)
+[pid: 21916|app: 0|req: 2/2] 106.39.42.152 () {62 vars in 1102 bytes} [Tue Jun 15 09:34:24 2021] GET /api/message/getUnread/ => generated 56 bytes in 86 msecs (HTTP/1.1 200) 6 headers in 171 bytes (1 switches on core 1)
+[pid: 21918|app: 0|req: 1/3] 106.39.42.152 () {62 vars in 1092 bytes} [Tue Jun 15 09:34:24 2021] GET /api/most_popular/ => generated 1702 bytes in 83 msecs (HTTP/1.1 200) 5 headers in 159 bytes (1 switches on core 0)
