@@ -80,8 +80,14 @@ class ArticleRemark(models.Model):
         verbose_name_plural = verbose_name
 
 
-class ArticleNews(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+class ActActivity(models.Model):
+    # 0 - 修改了文章
+    # 1 - 成功修改
+    # 2 - 提交了文章
+    # 3 - 成功发布
+    # 4 - 审核了文章
+    # 5 - 删除了文章
+
     select_status = (
         (0, '修改了文章'),
         (1, '修改成功了文章'),
@@ -90,11 +96,12 @@ class ArticleNews(models.Model):
         (4, '审核了文章'),
         (5, '删除了文章'),
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.SmallIntegerField(choices=select_status, default=2)
-    create_time = models.DateTimeField(auto_now_add=True)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'tb_news'
+        db_table = 'tb_activity'
         verbose_name = '文章动态表'
         verbose_name_plural = verbose_name

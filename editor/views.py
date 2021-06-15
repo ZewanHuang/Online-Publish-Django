@@ -305,6 +305,12 @@ def update_status(request):
                 message.user = user
                 message.save()
 
+                act = ActActivity()
+                act.status = 3
+                act.article = article
+                act.user = user
+                act.save()
+
         return JsonResponse({'status_code': SUCCESS})
 
     return JsonResponse({'status_code': DEFAULT})
@@ -326,6 +332,12 @@ def delete_article(request):
                 message.content = '您的文章《' + article.title + '》违背规定，已被编辑删除。如有异议，请及时联系编辑！'
                 message.user = user
                 message.save()
+
+                act = ActActivity()
+                act.status = 5
+                act.article = article
+                act.user = user
+                act.save()
 
             # new_message = ArticleNews()
             # new_message.article = article
