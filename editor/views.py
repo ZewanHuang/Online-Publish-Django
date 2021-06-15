@@ -235,6 +235,14 @@ def allot_review(request):
                         article_review.review = review
                         article_review.save()
 
+                        # message to review
+                        message = Message()
+                        message.message_type = '未读'
+                        message.title = '审核分配'
+                        message.user = review
+                        message.content = '您被分配了文章《' + article.title + '》，请及时审核并提交！'
+                        message.save()
+
                     article.status = 1
                     article.save()
 
