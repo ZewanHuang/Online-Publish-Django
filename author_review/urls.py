@@ -11,6 +11,8 @@ urlpatterns = [
     path('upload_article/', upload_article),
     path('confirm_article/', confirm_article),
 
+    path('edit_article/', edit_article),
+
     path('get_article/', search_article),
 
     path('writing/', writing_info),
@@ -25,11 +27,11 @@ urlpatterns = [
     path('review_remark/', search_review_remark),
     path('author_review/', write_remark),
 
-    path('news/', news),
-
     path('add_read_times/', add_read_times),
     path('add_download_times/', add_download_times),
 
     path('self_popular/', self_popular),
     path('self_latest/', self_latest),
+
+    path('get_activity/', get_activity),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

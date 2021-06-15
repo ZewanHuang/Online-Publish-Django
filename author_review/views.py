@@ -99,14 +99,60 @@ def upload_article_info(request):
 
                 except:
                     new_article.delete()
-                    return JsonResponse({'status_code': '4002'})     
+                    return JsonResponse({'status_code': '4002'})
 
-                new_message = ArticleNews()
-                new_message.article = new_article
-                print(request.session.get('username'))
-                new_message.user = User.objects.get(username=request.session.get('username'))
-                new_message.status = 2
-                new_message.save()
+            else:
+                return JsonResponse({'status_code': LogoutStatus.USER_NOT_LOGIN})
+
+        else:
+            return JsonResponse({'status_code': FORM_ERROR})
+
+        return JsonResponse({'status_code': SUCCESS, 'articleID': new_article.article_id})
+
+    return JsonResponse({'status_code': DEFAULT})
+
+
+@csrf_exempt
+def edit_article(request):
+    if request.method == 'POST':
+
+        aid = request.POST.get('aid')
+        article_form = ArticleForm(request.POST)
+
+        if article_form.is_valid():
+            title = article_form.cleaned_data.get('title')
+            abstract = article_form.cleaned_data.get('abstract')
+            key = article_form.cleaned_data.get('key')
+            content = article_form.cleaned_data.get('content')
+            str_category = article_form.cleaned_data.get('category')
+            str_writer = article_form.cleaned_data.get('writers')
+
+            if request.session.get('is_login'):
+                new_article = Article.objects.get(article_id=aid)
+                new_article.title = title
+                new_article.abstract = abstract
+                new_article.key = key
+                new_article.content = content
+
+                same_category = Category.objects.get(category=str_category)
+                new_article.category = same_category
+
+                writers = str_writer.split(',')
+                print(writers)
+                for writer in writers:
+                    try:
+                        same_writer = Writer.objects.get(writer__real_name=writer)
+                        new_article.writers.add(same_writer)
+                    except:
+                        return JsonResponse({'status_code': '4002'})
+
+                    act = ActActivity()
+                    act.status = 0
+                    act.article = new_article
+                    act.user = same_writer.writer
+                    act.save()
+
+                new_article.save()
 
             else:
                 return JsonResponse({'status_code': LogoutStatus.USER_NOT_LOGIN})
@@ -169,6 +215,13 @@ def confirm_article(request):
                 message_to_editor.content = '用户已投稿上传文章《' + this_article.title + '》，请及时安排审稿人进行审核！'
                 message_to_editor.save()
 
+                # activity
+                act = ActActivity()
+                act.article = this_article
+                act.status = 2
+                act.user = user
+                act.save()
+
             return JsonResponse({'status_code': SUCCESS})
         return JsonResponse({'status_code': '4002'})
     return JsonResponse({'status_code': '4003'})
@@ -198,15 +251,6 @@ def write_remark(request):
                 same_remark.status = 1
                 same_remark.save()
 
-                articleRemarks = ArticleRemark.objects.filter(article=article)
-                ableToSave = True
-                for ar in articleRemarks:
-                    if ar.status == 0:
-                        ableToSave = False
-                if ableToSave:
-                    article.status = 2
-                    article.save()
-
                 # message to editor
                 editor = User.objects.get(username='editor01')
                 message_to_editor = Message()
@@ -216,13 +260,31 @@ def write_remark(request):
                 message_to_editor.content = '审稿人' + review.review.real_name + '已提交了《' + article.title + '》的评论，请及时查看与处理！'
                 message_to_editor.save()
 
-                    # new_message = ArticleNews()
-                    # new_message.article = article
-                    # new_message.user = review
-                    # new_message.status = 4
-                    # new_message.save()
-                # else:
-                #     return JsonResponse({'status_code': RemarkStatus.REMARK_EXIST})
+                articleRemarks = ArticleRemark.objects.filter(article=article)
+                ableToSave = True
+                for ar in articleRemarks:
+                    if ar.status == 0:
+                        ableToSave = False
+                if ableToSave:
+                    article.status = 2
+                    article.save()
+
+                    # message to editor
+                    editor = User.objects.get(username='editor01')
+                    message_to_editor = Message()
+                    message_to_editor.message_type = '未读'
+                    message_to_editor.title = '审稿完成'
+                    message_to_editor.user = editor
+                    message_to_editor.content = '文章《' + article.title + '》的评论已全部提交完毕，请及时查看与发布！'
+                    message_to_editor.save()
+
+                # activity
+                act = ActActivity()
+                act.status = 4
+                act.article = article
+                act.user = review.review
+                act.save()
+
             else:
                 return JsonResponse({'status_code': RemarkStatus.REVIEW_NOT_MATCH})
         except:
@@ -550,24 +612,6 @@ def search_review_remark(request):
 
 
 @csrf_exempt
-def news(request):
-    if request.method == 'POST':
-        article_id = request.POST.get('article_id')
-        all_news = ArticleNews.objects.filter(article_id=article_id).order_by('-create_time')
-        if all_news:
-            json_list = []
-            for one_new in all_news:
-                json_item = {"status": one_new.status, "title": one_new.article.title,
-                             "username": one_new.user.username,
-                             "create_time": one_new.create_time.strftime("%Y-%m-%d %H:%M:%S")}
-                json_list.append(json_item)
-            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
-
-        return JsonResponse({'status_code': MesStatus.NEWS_NOT_EXISTS})
-    return JsonResponse({'status_code': DEFAULT})
-
-
-@csrf_exempt
 def add_read_times(request):
     if request.method == 'POST':
         aid = request.POST.get('aid')
@@ -677,3 +721,24 @@ def self_latest(request):
     else:
         return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
 
+
+@csrf_exempt
+def get_activity(request):
+    self_username = request.session.get('username')
+    self_user = User.objects.get(username=self_username)
+    all_acts = ActActivity.objects.filter(user=self_user)
+
+    if all_acts:
+        act_list = []
+        for act in all_acts:
+            act_item = {
+                'status': int(act.status),
+                'title': act.article.title,
+                'aid': act.article.article_id,
+                'date': act.time.strftime('%Y/%m/%d')
+            }
+            act_list.append(act_item)
+        print(act_list)
+        return JsonResponse({'status_code': SUCCESS, 'acts': json.dumps(act_list, ensure_ascii=False)})
+
+    return JsonResponse({'status_code': '4001'})
