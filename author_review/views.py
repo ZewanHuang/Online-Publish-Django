@@ -394,19 +394,26 @@ def search_remark_list(request):
         title = request.POST.get('title')
         aid = request.POST.get('aid')
 
-        search_remark_list = ArticleRemark.objects.filter(Q(article__writers__writer_id=writer.id) & Q(status=1))
+        search_remark_list = ArticleRemark.objects.filter(Q(article__writers__writer=writer.writer) & Q(status=1))
+        print(search_remark_list[0].article.article_id)
         json_list = []
         if aid:
-            for search_remark in list(search_remark_list):
-                if aid == search_remark.article.article_id:
+            for search_remark in search_remark_list:
+                if int(aid) == int(search_remark.article.article_id):
+                    if search_remark.review.review.avatar:
+                        avatar = WEB_ROOT + search_remark.review.review.avatar.url
+                    else:
+                        avatar = WEB_ROOT + '/media/avatar/user_default/' + '2.png'
+
                     json_item = {"article_id": search_remark.article.article_id,
                                  "title": search_remark.article.title,
                                  "content": search_remark.remark,
-                                 "review": search_remark.review.username,
-                                 'reviewer': search_remark.review.real_name,
-                                 'avatar': search_remark.review.review.avatar,
+                                 "review": search_remark.review.review.username,
+                                 'reviewer': search_remark.review.review.real_name,
+                                 'avatar': avatar,
                                  'email': search_remark.review.review.email,
-                                 "time": search_remark.create_time}
+                                 "time": search_remark.create_time.strftime("%Y-%m-%d %H:%M:%S")
+                                 }
                     json_list.append(json_item)
         elif key:
             for search_remark in list(search_remark_list):
@@ -449,7 +456,7 @@ def search_remark_list(request):
                 json_list.append(json_item)
 
         if json_list:
-            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list)})
+            return JsonResponse({'status_code': SUCCESS, 'data': json.dumps(json_list, ensure_ascii=False)})
         else:
             return JsonResponse({'status_code': '4001'})
     return JsonResponse({'status_code': DEFAULT})
