@@ -353,14 +353,15 @@ def search_list(request):
                 writer = Writer.objects.get(writer__real_name=writer_name)
             except:
                 return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
-            # articles = Article.objects.filter(Q(writers__writer=writer) & Q(status=4))
-            articles = Article.objects.filter(writer__real_name=writer_name)
+            articles = Article.objects.filter(Q(writers__writer=writer.writer) & Q(status=4))
+            # articles = Article.objects.filter(writers__writer__real_name=writer_name, status=4)
         elif key:
             articles = Article.objects.filter(Q(Q(key__contains=key) | Q(title__contains=key)) & Q(status=4))
         elif category:
             articles = Article.objects.filter(Q(category__category=category) & Q(status=4))
         elif title:
-            articles = Article.objects.filter(Q(title__contains=title) | Q(status=4))
+            # articles = Article.objects.filter(Q(title__contains=title) | Q(status=4))
+            articles = Article.objects.filter(title__contains=title, status=4)
         else:
             articles = Article.objects.filter(status=4)
         print(articles)
