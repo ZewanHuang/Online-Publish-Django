@@ -47,6 +47,15 @@ def apply_writer(request):
                 message.content = '欢迎注册本平台的作者，期待您的投稿！'
                 message.save()
 
+                # message to editor
+                editor = User.objects.get(username='editor01')
+                message_to_editor = Message()
+                message_to_editor.message_type = '未读'
+                message_to_editor.title = '作者申请'
+                message_to_editor.user = editor
+                message_to_editor.content = '真实姓名为' + user.real_name + '的用户' + user.username + '已成功申请成为作者，您可以在工作空间查看！'
+                message_to_editor.save()
+
         else:
             return JsonResponse({'status_code': WriterStatus.MESSAGE_NOT_EXIST})
 
@@ -147,9 +156,18 @@ def confirm_article(request):
                 message = Message()
                 message.message_type = '未读'
                 message.title = '上传文章'
-                message.content = '感谢投稿本平台，您的文章《' + this_article.title + '》已上传成功，请耐心等待审核'
+                message.content = '感谢投稿本平台，您的文章《' + this_article.title + '》已上传成功，请耐心等待审核！'
                 message.user = user
                 message.save()
+
+                # message to editor
+                editor = User.objects.get(username='editor01')
+                message_to_editor = Message()
+                message_to_editor.message_type = '未读'
+                message_to_editor.title = '文章上传'
+                message_to_editor.user = editor
+                message_to_editor.content = '用户已投稿上传文章《' + this_article.title + '》，请及时安排审稿人进行审核！'
+                message_to_editor.save()
 
             return JsonResponse({'status_code': SUCCESS})
         return JsonResponse({'status_code': '4002'})
@@ -182,6 +200,15 @@ def write_remark(request):
 
                 article.status = 2
                 article.save()
+
+                # message to editor
+                editor = User.objects.get(username='editor01')
+                message_to_editor = Message()
+                message_to_editor.message_type = '未读'
+                message_to_editor.title = '评论上传'
+                message_to_editor.user = editor
+                message_to_editor.content = '审稿人' + review.review.real_name + '已提交了《' + article.title + '》的评论，请及时查看与处理！'
+                message_to_editor.save()
 
                     # new_message = ArticleNews()
                     # new_message.article = article
