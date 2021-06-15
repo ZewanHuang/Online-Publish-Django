@@ -198,8 +198,14 @@ def write_remark(request):
                 same_remark.status = 1
                 same_remark.save()
 
-                article.status = 2
-                article.save()
+                articleRemarks = ArticleRemark.objects.filter(article=article)
+                ableToSave = True
+                for ar in articleRemarks:
+                    if ar.status == 0:
+                        ableToSave = False
+                if ableToSave:
+                    article.status = 2
+                    article.save()
 
                 # message to editor
                 editor = User.objects.get(username='editor01')
