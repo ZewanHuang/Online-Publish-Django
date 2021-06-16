@@ -1,5 +1,6 @@
 import json
 
+from django.db.models import F
 from django.http import JsonResponse
 
 # Create your views here.
@@ -157,7 +158,7 @@ def getAll(request):
         except:
             return JsonResponse({'status_code': MesStatus.USER_NOT_EXISTS})
 
-        messages = Message.objects.filter(user=this_user)
+        messages = Message.objects.filter(user=this_user).order_by((F('c_time').desc()))
 
         mesList = []
         for message in messages:
