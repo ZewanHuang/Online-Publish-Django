@@ -1,7 +1,7 @@
 import json
 import random
 import re
-from django.db.models import Q, F
+from django.db.models import Q, F, Max
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
@@ -256,14 +256,32 @@ def allot_review(request):
 
         # 未指定审稿人-随机分配
         else:
-            review_obj = Review.objects.last()
-            rand_id = random.sample(range(review_obj.id), 1)
-            review = Review.objects.get(review_id=rand_id)
+            max_id = Review.objects.all().aggregate(max_id=Max("id"))['max_id']
+            while True:
+                pk = random.randint(1, max_id)
+                review_random = Review.objects.filter(pk=pk).first()
+                if review_random:
+                    review_obj = review_random
+                    break
+
+            review = review_obj
             try:
                 article_review = ArticleRemark()
                 article_review.article = article
                 article_review.review = review
                 article_review.save()
+
+                # message to review
+                message = Message()
+                message.message_type = '未读'
+                message.title = '审核分配'
+                message.user = review.review
+                message.content = '您被分配了文章《' + article.title + '》，请及时审核并提交！'
+                message.save()
+
+                article.status = 1
+                article.save()
+
                 return JsonResponse({'status_code': '2001'})
             except:
                 return JsonResponse({'status_code': EditorStatus.ADD_REVIEW_ERROR})
