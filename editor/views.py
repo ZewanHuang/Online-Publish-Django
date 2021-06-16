@@ -224,48 +224,50 @@ def allot_review(request):
 
         try:
             article = Article.objects.get(article_id=article_id)
-            # 指定审稿人姓名
-            if reviews_name and reviews_name != '':
+        except:
+            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+        # 指定审稿人姓名
+        if reviews_name and reviews_name != '':
+            reviews = reviews_name.split(',')
+            for review_name in reviews:
                 try:
-                    reviews = reviews_name.split(',')
-                    for review_name in reviews:
-                        review = Review.objects.get(review__real_name=review_name)
-                        article_review = ArticleRemark()
-                        article_review.article = article
-                        article_review.review = review
-                        article_review.save()
-
-                        # message to review
-                        message = Message()
-                        message.message_type = '未读'
-                        message.title = '审核分配'
-                        message.user = review
-                        message.content = '您被分配了文章《' + article.title + '》，请及时审核并提交！'
-                        message.save()
-
-                    article.status = 1
-                    article.save()
-
-                    return JsonResponse({'status_code': SUCCESS})
+                    review = Review.objects.get(review__real_name=review_name)
                 except:
                     return JsonResponse({'status_code': WriterStatus.USER_NOT_EXIST})
 
-            # 未指定审稿人-随机分配
-            else:
-                review_obj = Review.objects.last()
-                rand_id = random.sample(range(review_obj.id), 1)
-                review = Review.objects.get(review_id=rand_id)
-                try:
-                    article_review = ArticleRemark()
-                    article_review.article = article
-                    article_review.review = review
-                    article_review.save()
-                    return JsonResponse({'status_code': '2001'})
-                except:
-                    return JsonResponse({'status_code': EditorStatus.ADD_REVIEW_ERROR})
+                article_review = ArticleRemark()
+                article_review.article = article
+                article_review.review = review
+                article_review.save()
 
-        except:
-            return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+                # message to review
+                message = Message()
+                message.message_type = '未读'
+                message.title = '审核分配'
+                message.user = review.review
+                message.content = '您被分配了文章《' + article.title + '》，请及时审核并提交！'
+                message.save()
+
+            article.status = 1
+            article.save()
+
+            return JsonResponse({'status_code': SUCCESS})
+
+        # 未指定审稿人-随机分配
+        else:
+            review_obj = Review.objects.last()
+            rand_id = random.sample(range(review_obj.id), 1)
+            review = Review.objects.get(review_id=rand_id)
+            try:
+                article_review = ArticleRemark()
+                article_review.article = article
+                article_review.review = review
+                article_review.save()
+                return JsonResponse({'status_code': '2001'})
+            except:
+                return JsonResponse({'status_code': EditorStatus.ADD_REVIEW_ERROR})
+
     return JsonResponse({'status_code': '3000'})
 
 
