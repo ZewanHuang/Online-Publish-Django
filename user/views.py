@@ -437,7 +437,7 @@ def most_popular(request):
             for writer in article.writers.all():
                 writers_name.append(writer.writer.real_name)
             info = {
-                "aid": article.article_id,
+                "article_id": article.article_id,
                 "title": article.title,
                 "abstract": article.abstract,
                 "key": article.key,
