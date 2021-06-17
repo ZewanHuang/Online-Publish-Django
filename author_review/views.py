@@ -507,7 +507,7 @@ def search_remark_list(request):
                                  'reviewer': search_remark.review.review.real_name,
                                  'avatar': avatar,
                                  'email': search_remark.review.review.email,
-                                 "time": search_remark.create_time.strftime("%Y-%m-%d %H:%M:%S")
+                                 "time": search_remark.create_time.strftime("%Y-%m-%d")
                                  }
                     json_list.append(json_item)
         elif key:
