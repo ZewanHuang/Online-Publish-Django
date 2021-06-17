@@ -342,34 +342,34 @@ def delete_article(request):
         article_id = request.POST.get('article_id')
         try:
             article = Article.objects.get(article_id=article_id)
-
-            # send message
-            users = User.objects.filter(writer__article=article)
-            for user in users:
-                message = Message()
-                message.message_type = '未读'
-                message.title = '删除提醒'
-                message.content = '您的文章《' + article.title + '》违背规定，已被编辑删除。如有异议，请及时联系编辑！'
-                message.user = user
-                message.save()
-
-                act = ActActivity()
-                act.status = 5
-                act.article = article
-                act.user = user
-                act.save()
-
-            # new_message = ArticleNews()
-            # new_message.article = article
-            # new_message.user = User.objects.get(username=request.session.get('username'))
-            # new_message.status = 5
-            # new_message.save()
-
-            article.delete()
-
-            return JsonResponse({'status_code': SUCCESS})
         except:
             return JsonResponse({'status_code': ArticleStatus.ARTICLE_NOT_EXIST})
+
+        # send message
+        users = User.objects.filter(writer__article=article)
+        for user in users:
+            message = Message()
+            message.message_type = '未读'
+            message.title = '删除提醒'
+            message.content = '您的文章《' + article.title + '》违背规定，已被编辑删除。如有异议，请及时联系编辑！'
+            message.user = user
+            message.save()
+
+            act = ActActivity()
+            act.status = 5
+            act.article = article
+            act.user = user
+            act.save()
+
+        # new_message = ArticleNews()
+        # new_message.article = article
+        # new_message.user = User.objects.get(username=request.session.get('username'))
+        # new_message.status = 5
+        # new_message.save()
+
+        article.delete()
+
+        return JsonResponse({'status_code': SUCCESS})
 
     return JsonResponse({'status_code': DEFAULT})
 
@@ -812,7 +812,7 @@ def get_article_detail(request):
                 'email': remark.review.review.email,
             }
             if remark.review.review.avatar:
-                remark_info['avatar'] = remark.review.review.avatar
+                remark_info['avatar'] = WEB_ROOT + remark.review.review.avatar.url
             else:
                 remark_info['avatar'] = WEB_ROOT + '/media/avatar/user_default/2.png'
 
