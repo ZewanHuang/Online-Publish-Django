@@ -17,9 +17,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include(('user.urls', 'user'), namespace="user")),
-    path('', include(('author_review.urls', 'author_review'), namespace="author_review")),
-    path('message/', include(('message.urls', 'message'), namespace='message')),
-    path('editor/', include(('editor.urls', 'editor'), namespace="editor")),
+    path('api/admin/', admin.site.urls),
+    path('api/', include(('user.urls', 'user'), namespace="user")),
+    path('api/', include(('author_review.urls', 'author_review'), namespace="author_review")),
+    path('api/message/', include(('message.urls', 'message'), namespace='message')),
+    path('api/editor/', include(('editor.urls', 'editor'), namespace="editor")),
 ]
