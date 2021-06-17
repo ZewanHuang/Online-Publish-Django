@@ -152,6 +152,15 @@ def edit_article(request):
                     act.user = same_writer.writer
                     act.save()
 
+                # message to editor
+                editor = User.objects.get(username='editor01')
+                message_to_editor = Message()
+                message_to_editor.message_type = '未读'
+                message_to_editor.title = '文章修改'
+                message_to_editor.user = editor
+                message_to_editor.content = '用户已修改文章《' + new_article.title + '》，请核实检查！'
+                message_to_editor.save()
+
                 new_article.save()
 
             else:
