@@ -1,0 +1,44 @@
+审核系统
+新增
+popular_article:返回受欢迎的文章信息
+search_article:查询作者的文章，包括返回全部，根据关键词返回，根据类别返回，根据标题返回
+search_remark_list：查询作者的文章评论，评论的文章如上
+search_article_remark：根据查询精确返回某篇文章的评论
+search_review_remark：返回审稿人所有需要评论的文章的评论（包括已评论和未评论的）
+
+已有：
+apply_writer:申请成为作者
+upload:上传文章
+remark:上传评论
+writing_info:作者信息
+review_info:审稿人信息
+
+用户系统
+新增
+search_list:返回文章列表，包括返回全部，根据作者姓名查询，根据关键词、类别、标题查询
+search_exact：精确查询，根据article_id查询文章信息
+get_collect：获取用户收藏的文章
+
+已有：
+login:登录
+register:注册
+logout：退出登录
+user_confirm
+unverified_email
+upload_avatar：上传头像
+get_session_user：获取用户信息
+user_info:用户信息
+collect:用户收藏文章
+userinfo_edit:用户信息编辑
+
+编辑系统
+新增
+register_editor 申请成为编辑
+add_review 添加审稿人
+editor_info 查看编辑信息
+allot_review 分配审稿人
+update_status 更新状态（发布文章即修改文章状态为4）
+delete_article移除文章
+
+
+
