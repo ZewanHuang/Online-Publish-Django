@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 import pymysql
 
+from utils.Global import *
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,7 +30,7 @@ SECRET_KEY = 'django-insecure-*ad_mi_x%at$djks3g)_t)1^fn_g+5ziem0p&1d2*=u%65-noy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['zewan.top', '159.75.136.86', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = host.allowed_host
 
 
 # Application definition
@@ -91,10 +93,10 @@ WSGI_APPLICATION = 'django3.wsgi.application'
 DATABASES = {   # 配置 mysql 数据库
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ops',
-        'USER': 'root',
-        'PASSWORD': 'db123456',
-        'HOST': '159.75.136.86',
+        'NAME': db.db,
+        'USER': db.user,
+        'PASSWORD': db.passwd,
+        'HOST': db.host,
         'POST': '3306'
     }
 }
@@ -145,10 +147,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Send mail configuration
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.163.com'
-EMAIL_PORT = 25
-EMAIL_HOST_USER = 'zewantop@163.com'
-EMAIL_HOST_PASSWORD = 'VWBEHCXOSFHKBAGN'    # 邮箱 SMTP 授权码
+EMAIL_HOST = email.EMAIL_HOST
+EMAIL_PORT = email.EMAIL_PORT
+EMAIL_HOST_USER = email.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = email.EMAIL_HOST_PASSWORD    # 邮箱 SMTP 授权码
 
 CONFIRM_DAYS = 3    # confirm valid days
 
@@ -160,9 +162,7 @@ MEDIA_URL = '/media/'
 
 # Root url
 
-WEB_FRONT = 'http://127.0.0.1:8080'
-WEB_ROOT = 'http://127.0.0.1:8080/api'
-# WEB_ROOT = 'https://zewan.top/api'
-# WEB_FRONT = 'https://zewan.top'
+WEB_FRONT = rootUrl.WEB_FRONT
+WEB_ROOT = rootUrl.WEB_ROOT
 
 
