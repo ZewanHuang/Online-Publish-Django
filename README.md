@@ -1,6 +1,8 @@
 ## 网上出版系统后端
 
-> 北航软院大二软工大作业
+![python3.7](https://img.shields.io/badge/python-%3E%3D3.7-brightgreen)  ![django3.2](https://img.shields.io/badge/django-3.2-blue)
+
+> 北航 1921 软件工程大作业
 
 前端：[https://github.com/ZewanHuang/Online-Publish-Vue](https://github.com/ZewanHuang/Online-Publish-Vue)
 
