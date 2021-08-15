@@ -1,6 +1,6 @@
 # 网上出版系统后端
 
-![python3.7](https://img.shields.io/badge/python-%3E%3D3.7-brightgreen)  ![django3.2](https://img.shields.io/badge/django-3.2-blue)
+[![python3.7](https://img.shields.io/badge/python-%3E%3D3.7-brightgreen)](https://www.python.org/)  [![django3.2](https://img.shields.io/badge/django-3.2-blue)](https://docs.djangoproject.com/en/3.2/releases/3.2/)
 
 > 北航 1921 软件工程大作业
 
